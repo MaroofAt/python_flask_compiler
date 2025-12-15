@@ -34,3 +34,4 @@ flask_project/venv/
 flask_project/.env
 flask_project/__pycache__/
 flask_project/data/*
+flask_project/static/uploads/*
