@@ -28,3 +28,9 @@ replay_pid*
 
 # Antlr4 Gernerations
 gen/
+
+# Flask Example 
+flask_project/venv/
+flask_project/.env
+flask_project/__pycache__/
+flask_project/data/*

@@ -101,9 +101,9 @@ from datetime import datetime
 # import uuid
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '5-tkcy2i!(&^etw=61v$2!qxk@x9qv4ydxe^hrm@kfs_t1r!uy'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.config['DATA_FOLDER'] = 'data'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['UPLOAD_FOLDER'] = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
+app.config['DATA_FOLDER'] = os.environ.get('DATA_FOLDER', 'data')
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['DATA_FOLDER'], exist_ok=True)
