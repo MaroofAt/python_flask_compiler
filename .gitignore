@@ -25,3 +25,6 @@ replay_pid*
 
 # Intellij Specific Files
 .idea/
+
+# Antlr4 Gernerations
+gen/
