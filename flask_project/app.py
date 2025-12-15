@@ -1,0 +1,288 @@
+# from flask import Flask , jsonify, render_template , request, redirect, url_for, flash
+# from models import db,ProductModel
+# from werkzeug.utils import secure_filename
+# from datetime import datetime
+# import os
+
+
+# app = Flask(__name__)
+
+# app.config["SECRET_KEY"] = "5-tkcy2i!(&^etw=61v$2!qxk@x9qv4ydxe^hrm@kfs_t1r!uy"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///products.db"
+# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# app.config["UPLOAD_FOLDER"] = "static/uploads"
+
+# ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# db.init_app(app)
+
+# @app.before_request
+# def create_table():
+#     db.create_all()
+
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# @app.route('/create' , methods = ['POST' , 'GET'])
+# def create_product():
+#     if request.method == "GET":
+#         return render_template("create.html")
+    
+    
+#     if request.method == "POST":
+#         title = request.form.get("title")
+#         price = request.form.get("price")
+#         description = request.form.get("description")
+#         image = request.files.get("image")
+
+#         if not title:
+#             flash('Product title is required!', 'error')
+#             return redirect(url_for("create_product"))
+        
+#         if not description:
+#             flash('Product description is required!', 'error')
+#             return redirect(url_for("create_product"))
+            
+#         # print(image)
+#         if image and allowed_file(image.filename):
+#             filename = secure_filename(image.filename)
+            
+           
+#             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+#             filename = f"{timestamp}_{filename}"
+            
+#             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+#             image.save(filepath)
+            
+            
+#             product = ProductModel(
+#                 title=title,
+#                 price=price,
+#                 description=description,
+#                 image_filename=filename
+#             )
+        
+#             db.session.add(product)
+#             db.session.commit()
+            
+#             flash('Product created successfully!', 'success')
+#             return redirect(url_for('product_detail', id=product.id))
+#         else:
+#             flash('Invalid file type. Please upload an image (PNG, JPG, JPEG, GIF).', 'error')
+#             return redirect(url_for('create_product'))
+        
+#     return render_template('create.html')
+
+# @app.route("/")
+# @app.route('/products')
+# def list_products():
+#     products = ProductModel.query.all()
+#     return render_template("products.html" , products=products)
+
+
+# @app.route("/product/<int:id>")
+# def product_detail(id):
+#     product = ProductModel.query.get_or_404(id)
+#     print(product.image_filename)
+#     return render_template('product_detail.html', product=product)
+
+# if __name__ == '__main__':
+#     app.run(host = "localhost", port=5000)
+
+
+
+
+import os
+import json
+from flask import Flask, render_template, request, redirect, url_for, flash
+from werkzeug.utils import secure_filename
+from datetime import datetime
+# import uuid
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = '5-tkcy2i!(&^etw=61v$2!qxk@x9qv4ydxe^hrm@kfs_t1r!uy'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['DATA_FOLDER'] = 'data'
+
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(app.config['DATA_FOLDER'], exist_ok=True)
+
+class JSONProductStorage:
+
+    
+    def __init__(self, filename='products.json'):
+        self.filename = os.path.join(app.config['DATA_FOLDER'], filename)
+        self._ensure_file_exists()
+    
+    def _ensure_file_exists(self):
+        
+        if not os.path.exists(self.filename):
+            with open(self.filename, 'w') as f:
+                json.dump([], f)
+    
+    def read_all(self):
+        try:
+            with open(self.filename, 'r') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return []
+    
+    def write_all(self, products):
+        with open(self.filename, 'w') as f:
+            json.dump(products, f, indent=4, default=str)
+    
+    def get_next_id(self):
+        products = self.read_all()
+        if not products:
+            return 1
+        return max(product.get('id', 0) for product in products) + 1
+    
+    def get_all(self):
+        return self.read_all()
+    
+    def get_by_id(self, product_id):
+        products = self.read_all()
+        for product in products:
+            if product.get('id') == product_id:
+                return product
+        return None
+    
+    def add(self, product_data):
+        products = self.read_all()
+
+        product = {
+            'id': self.get_next_id(),
+            'title': product_data.get('title', ''),
+            'price': float(product_data.get('price', 0)),
+            'description': product_data.get('description', ''),
+            'image_filename': product_data.get('image_filename')
+        }
+        
+        products.append(product)
+        self.write_all(products)
+        return product
+    
+    
+    def delete(self, product_id):
+        products = self.read_all()
+        
+        for i, product in enumerate(products):
+            if product.get('id') == product_id:
+                
+                removed_product = products.pop(i)
+                self.write_all(products)
+                
+                if removed_product.get('image_filename'):
+                    image_path = os.path.join(
+                        app.config['UPLOAD_FOLDER'], 
+                        removed_product['image_filename']
+                    )
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
+                
+                return True
+        
+        return False
+
+storage = JSONProductStorage()
+
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_uploaded_file(file):
+    """Save uploaded file and return filename"""
+    if file and file.filename != '' and allowed_file(file.filename):
+        # Secure the filename
+        filename = secure_filename(file.filename)
+        
+        # Add timestamp for uniqueness
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        name, ext = os.path.splitext(filename)
+        filename = f"{timestamp}_{name}{ext}"
+        
+        # Save file
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        return filename
+    return None
+
+
+@app.route('/')
+@app.route('/products')
+def list_products():
+    products = storage.get_all()
+    return render_template('products.html', products=products)
+
+@app.route('/product/<int:id>')
+def product_detail(id):
+    product = storage.get_by_id(id)
+    
+    if not product:
+        flash('Product not found!', 'error')
+        return redirect(url_for('list_products'))
+    
+    return render_template('product_detail.html', product=product)
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_product():
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        price = request.form.get('price', '')
+        description = request.form.get('description', '')
+        
+        errors = []
+        if not title:
+            errors.append('Product title is required')
+        if not price:
+            errors.append('Price is required')
+        else:
+            try:
+                price = float(price)
+                if price < 0:
+                    errors.append('Price cannot be negative')
+            except ValueError:
+                errors.append('Price must be a number')
+        
+        if errors:
+            for error in errors:
+                flash(error, 'error')
+            return render_template('create.html')
+        
+        image_filename = None
+        if 'image' in request.files:
+            file = request.files['image']
+            image_filename = save_uploaded_file(file)
+        
+        product_data = {
+            'title': title,
+            'price': price,
+            'description': description,
+            'image_filename': image_filename
+        }
+        
+        product = storage.add(product_data)
+        
+        flash(f'Product "{title}" added successfully!', 'success')
+        return redirect(url_for('product_detail', id=product['id']))
+    
+    return render_template('create.html')
+
+@app.route('/delete/<int:product_id>')
+def delete_product(product_id):
+    success = storage.delete(product_id)
+    
+    if success:
+        flash('Product deleted successfully!', 'success')
+    else:
+        flash('Product not found!', 'error')
+    
+    return redirect(url_for('list_products'))
+
+if __name__ == '__main__':
+    app.run(debug=True)

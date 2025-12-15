@@ -1,0 +1,40 @@
+
+{% extends "base.html" %}
+
+{% block title %}All Products - Product Manager{% endblock %}
+
+{% block content %}
+    <h1>Our Products</h1>
+    
+    {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    
+                    {% if product.image_filename  %}
+                        <img src="{{ url_for('static', filename='uploads/' + product.image_filename) }}" 
+                             alt="{{ product.title }}" 
+                             class="product-image">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/placeholder.jpg') }}" 
+                             alt="No Image" 
+                             class="product-image">
+                    {% endif %}
+                    
+                    <div class="product-info">
+                        <h3 class="product-title">{{ product.title }}</h3>
+                        <p class="product-description">
+                            {{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}
+                        </p>
+                        <a href="{{ url_for('product_detail', id=product.id) }}" class="btn2">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px;">
+            <p style="font-size: 1.2rem; color: #666; margin-bottom: 20px;">No products found.</p>
+            <a href="{{ url_for('create_product') }}" class="btn btn-success">Add Your First Product</a>
+        </div>
+    {% endif %}
+{% endblock %}
