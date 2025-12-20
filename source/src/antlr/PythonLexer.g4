@@ -76,6 +76,7 @@ lexer grammar PythonLexer;
 
             if (indentPart.length() == 0) {
                 // blank line — skip emitting a NEWLINE for parser
+                pending.add(next);
                 return nextToken();
             }
 
@@ -159,7 +160,7 @@ RARROW           : '->';
 //DOUBLESTAREQUAL  : '**=';
 //DOUBLESLASH      : '//';
 //DOUBLESLASHEQUAL : '//=';
-//AT               : '@';
+AT               : '@';
 //ATEQUAL          : '@=';
 //COLONEQUAL       : ':=';
 

@@ -36,7 +36,7 @@ compound_stmt
     | while_stmt
 //    | try_stmt
     | func_def
-//    | class_def
+    | class_def
     ;
 
 
@@ -230,11 +230,12 @@ while_stmt
     : WHILE expr COLON suite
     ;
 
-// TODO Add decorators later ---------------- 👇
+// TODO Add the x += 1 and others later
+// TODO Really Add decorators later ---------------- 👇
 // TODO Add *args and **kwargs handling later 👇
 func_def
-    : DEF NAME LPAR (parameters_list?) RPAR
-        (RARROW (data_type| NONE | identifier /* variable may be class identifire */))?
+    : decorators? DEF NAME LPAR (parameters_list?) RPAR
+        (RARROW (data_type| NONE | identifier /* class identifier */ ))?
         COLON suite
     ;
 
@@ -254,6 +255,19 @@ non_default_parameter
     : identifier (COLON data_type)?
     ;
 
+decorators
+    : decorator+
+    ;
+decorator
+    : AT identifier NEWLINE
+    ;
+
+class_def
+    : decorators? CLASS identifier inheritance? COLON suite
+    ;
+inheritance
+    : LPAR identifier (COMMA identifier)* COMMA? RPAR
+    ;
 
 suite
     : simple_stmt
