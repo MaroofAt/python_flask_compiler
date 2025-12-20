@@ -35,7 +35,7 @@ compound_stmt
     : if_stmt
     | for_stmt
     | while_stmt
-//    | try_stmt
+    | try_stmt //TODO
     | func_def
     | class_def
     ;
@@ -340,6 +340,16 @@ class_def
     ;
 inheritance
     : LPAR identifier (COMMA identifier)* COMMA? RPAR
+    ;
+
+try_stmt
+    : TRY COLON suite
+        NEWLINE (EXCEPT identifier AS identifier COLON suite)+
+        NEWLINE (ELSE COLON suite)?
+        NEWLINE (FINALLY COLON suite)?
+
+    | TRY COLON suite
+        NEWLINE FINALLY COLON suite
     ;
 
 suite

@@ -232,8 +232,8 @@ KEYWORD_CHAR: 'chr';
 KEYWORD_STRING: 'str';
 KEYWORD_BOOL: 'bool';
 
-METHOD_TYPE: 'type';
-METHOD_PRINT: 'print';
+//METHOD_TYPE: 'type';
+//METHOD_PRINT: 'print';
 KEYWORD_CASE: 'case';
 
 fragment CHARACTER: [_a-zA-Z];
