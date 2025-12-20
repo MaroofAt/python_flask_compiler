@@ -163,7 +163,7 @@ postfix
     | subscription
     ;
 call
-    : LPAR argument_list? RPAR
+    : LPAR arguments_list? RPAR
     ;
 subscription
     : LSQB expr RSQB
@@ -222,10 +222,40 @@ set_items
     ;
 
 
-argument_list
-    : expr_list
+arguments_list
+    : expr
+        (COMMA expr)*
+        (COMMA identifier_equal_expr_argument)*
+        (COMMA args_argument)*
+        (COMMA kwargs_argument)* COMMA?
+
+    | identifier_equal_expr_argument
+        (COMMA identifier_equal_expr_argument)*
+        (COMMA args_argument)*
+        (COMMA kwargs_argument)* COMMA?
+
+    | args_argument
+        (COMMA args_argument)*
+        (COMMA kwargs_argument)* COMMA?
+
+    | kwargs_argument
+        (COMMA kwargs_argument)* COMMA?
     ;
 
+args_argument
+    : STAR expr
+    ;
+
+kwargs_argument
+    : DOUBLESTAR expr
+    ;
+
+identifier_equal_expr_argument
+    : identifier EQUAL expr
+    ;
+
+// TODO Support the ability to call a function wuth no assignment statement
+// TODO reminder: this rule has no usages 👇
 expr_list
     : expr (COMMA expr)* (COMMA)?
     ;
@@ -266,9 +296,28 @@ func_def
 parameters_list
     : non_default_parameter
         (COMMA non_default_parameter)*
-        (COMMA default_parameter)* COMMA?
+        (COMMA default_parameter)*
+        (COMMA args_kwargs_parameters_list)? COMMA?
+
     | default_parameter
-        (COMMA default_parameter)* COMMA?
+        (COMMA default_parameter)*
+        (COMMA args_kwargs_parameters_list)? COMMA?
+
+    | args_kwargs_parameters_list
+    ;
+
+args_kwargs_parameters_list
+    : args_parameter
+        (COMMA kwargs_parameter)?
+    | kwargs_parameter
+    ;
+
+args_parameter
+    : STAR non_default_parameter
+    ;
+
+kwargs_parameter
+    : DOUBLESTAR non_default_parameter
     ;
 
 default_parameter
