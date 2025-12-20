@@ -21,6 +21,7 @@ simple_stmt
 
 small_stmt
     : assignment
+    | augmented_assignment
     | return_stmt
     | raise_stmt
 //    | import_stmt
@@ -45,6 +46,18 @@ assignment
     | typed_assignment
 //    | unpaking_tuples_assignment
 //    | chained_assignement
+    ;
+augmented_assignment
+    : target augmented_assignment_operator expr
+    ;
+augmented_assignment_operator
+    : PLUSEQUAL
+    | MINEQUAL
+    | STAREQUAL
+    | SLASHEQUAL
+    | PERCENTEQUAL
+    | CIRCUMFLEXEQUAL // xor
+    | DOUBLESTAREQUAL // power
     ;
 
 target
@@ -114,7 +127,11 @@ comparison
     ;
 
 arithmetic_expr
-    :addition_expr
+    : xor_expr
+    ;
+
+xor_expr
+    : addition_expr (CIRCUMFLEX addition_expr)*
     ;
 
 addition_expr
@@ -122,11 +139,19 @@ addition_expr
     ;
 
 multiplication_expr
-    : primary ((STAR | SLASH | PERCENT) primary)*
+    : unary_expr ((STAR | SLASH | PERCENT) unary_expr)*
+    ;
+
+unary_expr
+    : unary_op* power_expr
+    ;
+
+power_expr
+    : primary (DOUBLESTAR power_expr)?
     ;
 
 primary
-    : unary_op* atom postfix*
+    : atom postfix*
     ;
 unary_op
     : PLUS
@@ -230,8 +255,7 @@ while_stmt
     : WHILE expr COLON suite
     ;
 
-// TODO Add the x += 1 and others later
-// TODO Really Add decorators later ---------------- 👇
+
 // TODO Add *args and **kwargs handling later 👇
 func_def
     : decorators? DEF NAME LPAR (parameters_list?) RPAR

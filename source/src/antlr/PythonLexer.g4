@@ -157,7 +157,7 @@ RARROW           : '->';
 //VBAREQUAL        : '|=';
 //LEFTSHIFTEQUAL   : '<<=';
 //RIGHTSHIFTEQUAL  : '>>=';
-//DOUBLESTAREQUAL  : '**=';
+DOUBLESTAREQUAL  : '**=';
 //DOUBLESLASH      : '//';
 //DOUBLESLASHEQUAL : '//=';
 AT               : '@';
