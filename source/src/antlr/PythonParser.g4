@@ -22,9 +22,10 @@ simple_stmt
 small_stmt
     : assignment
     | augmented_assignment
+    | func_call_stmt
     | return_stmt
     | raise_stmt
-//    | import_stmt
+    | import_stmt
     | global_stmt
     | break_stmt    //BREAK
     | pass_stmt     //PASS
@@ -35,7 +36,7 @@ compound_stmt
     : if_stmt
     | for_stmt
     | while_stmt
-    | try_stmt //TODO
+    | try_stmt
     | func_def
     | class_def
     ;
@@ -254,8 +255,7 @@ identifier_equal_expr_argument
     : identifier EQUAL expr
     ;
 
-// TODO Support the ability to call a function wuth no assignment statement
-// TODO reminder: this rule has no usages 👇
+
 expr_list
     : expr (COMMA expr)* (COMMA)?
     ;
@@ -286,7 +286,7 @@ while_stmt
     ;
 
 
-// TODO Add *args and **kwargs handling later 👇
+
 func_def
     : decorators? DEF NAME LPAR (parameters_list?) RPAR
         (RARROW (data_type| NONE | identifier /* class identifier */ ))?
@@ -355,6 +355,33 @@ try_stmt
 suite
     : simple_stmt
     | NEWLINE INDENT statements DEDENT
+    ;
+
+
+// Small Simple Statments
+func_call_stmt
+    : atom call
+    ;
+
+import_stmt
+    : IMPORT import_targets
+    | FROM import_from_target IMPORT import_targets
+    ;
+
+import_targets
+    : import_target (COMMA import_target)* COMMA?
+    ;
+
+import_target
+    : identifier (AS identifier)?
+    | identifier (DOT identifier)+ (AS identifier)?
+    | STAR
+    ;
+
+import_from_target
+    : identifier (DOT identifier)*
+    | (DOT | ELLIPSIS)+
+    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*
     ;
 
 // Tiny Simple Statements
