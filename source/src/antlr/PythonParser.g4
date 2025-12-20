@@ -21,9 +21,11 @@ simple_stmt
 
 small_stmt
     : assignment
+    | augmented_assignment
+    | func_call_stmt
     | return_stmt
     | raise_stmt
-//    | import_stmt
+    | import_stmt
     | global_stmt
     | break_stmt    //BREAK
     | pass_stmt     //PASS
@@ -34,7 +36,7 @@ compound_stmt
     : if_stmt
     | for_stmt
     | while_stmt
-//    | try_stmt
+    | try_stmt
     | func_def
     | class_def
     ;
@@ -45,6 +47,18 @@ assignment
     | typed_assignment
 //    | unpaking_tuples_assignment
 //    | chained_assignement
+    ;
+augmented_assignment
+    : target augmented_assignment_operator expr
+    ;
+augmented_assignment_operator
+    : PLUSEQUAL
+    | MINEQUAL
+    | STAREQUAL
+    | SLASHEQUAL
+    | PERCENTEQUAL
+    | CIRCUMFLEXEQUAL // xor
+    | DOUBLESTAREQUAL // power
     ;
 
 target
@@ -114,7 +128,11 @@ comparison
     ;
 
 arithmetic_expr
-    :addition_expr
+    : xor_expr
+    ;
+
+xor_expr
+    : addition_expr (CIRCUMFLEX addition_expr)*
     ;
 
 addition_expr
@@ -122,11 +140,19 @@ addition_expr
     ;
 
 multiplication_expr
-    : primary ((STAR | SLASH | PERCENT) primary)*
+    : unary_expr ((STAR | SLASH | PERCENT) unary_expr)*
+    ;
+
+unary_expr
+    : unary_op* power_expr
+    ;
+
+power_expr
+    : primary (DOUBLESTAR power_expr)?
     ;
 
 primary
-    : unary_op* atom postfix*
+    : atom postfix*
     ;
 unary_op
     : PLUS
@@ -138,7 +164,7 @@ postfix
     | subscription
     ;
 call
-    : LPAR argument_list? RPAR
+    : LPAR arguments_list? RPAR
     ;
 subscription
     : LSQB expr RSQB
@@ -197,9 +223,38 @@ set_items
     ;
 
 
-argument_list
-    : expr_list
+arguments_list
+    : expr
+        (COMMA expr)*
+        (COMMA identifier_equal_expr_argument)*
+        (COMMA args_argument)*
+        (COMMA kwargs_argument)* COMMA?
+
+    | identifier_equal_expr_argument
+        (COMMA identifier_equal_expr_argument)*
+        (COMMA args_argument)*
+        (COMMA kwargs_argument)* COMMA?
+
+    | args_argument
+        (COMMA args_argument)*
+        (COMMA kwargs_argument)* COMMA?
+
+    | kwargs_argument
+        (COMMA kwargs_argument)* COMMA?
     ;
+
+args_argument
+    : STAR expr
+    ;
+
+kwargs_argument
+    : DOUBLESTAR expr
+    ;
+
+identifier_equal_expr_argument
+    : identifier EQUAL expr
+    ;
+
 
 expr_list
     : expr (COMMA expr)* (COMMA)?
@@ -230,9 +285,8 @@ while_stmt
     : WHILE expr COLON suite
     ;
 
-// TODO Add the x += 1 and others later
-// TODO Really Add decorators later ---------------- 👇
-// TODO Add *args and **kwargs handling later 👇
+
+
 func_def
     : decorators? DEF NAME LPAR (parameters_list?) RPAR
         (RARROW (data_type| NONE | identifier /* class identifier */ ))?
@@ -242,9 +296,28 @@ func_def
 parameters_list
     : non_default_parameter
         (COMMA non_default_parameter)*
-        (COMMA default_parameter)* COMMA?
+        (COMMA default_parameter)*
+        (COMMA args_kwargs_parameters_list)? COMMA?
+
     | default_parameter
-        (COMMA default_parameter)* COMMA?
+        (COMMA default_parameter)*
+        (COMMA args_kwargs_parameters_list)? COMMA?
+
+    | args_kwargs_parameters_list
+    ;
+
+args_kwargs_parameters_list
+    : args_parameter
+        (COMMA kwargs_parameter)?
+    | kwargs_parameter
+    ;
+
+args_parameter
+    : STAR non_default_parameter
+    ;
+
+kwargs_parameter
+    : DOUBLESTAR non_default_parameter
     ;
 
 default_parameter
@@ -269,9 +342,46 @@ inheritance
     : LPAR identifier (COMMA identifier)* COMMA? RPAR
     ;
 
+try_stmt
+    : TRY COLON suite
+        NEWLINE (EXCEPT identifier AS identifier COLON suite)+
+        NEWLINE (ELSE COLON suite)?
+        NEWLINE (FINALLY COLON suite)?
+
+    | TRY COLON suite
+        NEWLINE FINALLY COLON suite
+    ;
+
 suite
     : simple_stmt
     | NEWLINE INDENT statements DEDENT
+    ;
+
+
+// Small Simple Statments
+func_call_stmt
+    : atom call
+    ;
+
+import_stmt
+    : IMPORT import_targets
+    | FROM import_from_target IMPORT import_targets
+    ;
+
+import_targets
+    : import_target (COMMA import_target)* COMMA?
+    ;
+
+import_target
+    : identifier (AS identifier)?
+    | identifier (DOT identifier)+ (AS identifier)?
+    | STAR
+    ;
+
+import_from_target
+    : identifier (DOT identifier)*
+    | (DOT | ELLIPSIS)+
+    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*
     ;
 
 // Tiny Simple Statements
