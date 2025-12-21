@@ -22,7 +22,7 @@ lexer grammar PythonLexer;
         return t;
     }
 
-    private int getIndentationCount(String spaces) {
+    private int getIndentationCount(String spaces)throws RuntimeException{
         int count = 0;
         for (char ch : spaces.toCharArray()) {
             if (ch == '\t') {
@@ -32,11 +32,12 @@ lexer grammar PythonLexer;
                 count += 1;
             }
         }
+        if(count%4 != 0) throw new RuntimeException("IndentationError: unexpected indent");
         return count;
     }
 
     @Override
-    public org.antlr.v4.runtime.Token nextToken(){
+    public org.antlr.v4.runtime.Token nextToken()throws RuntimeException{
         // If we already queued tokens (INDENT/DEDENT/NEWLINE), return them first
         if (!pending.isEmpty()) {
             return pending.poll();
@@ -73,10 +74,10 @@ lexer grammar PythonLexer;
             while (i < newlineText.length() && (newlineText.charAt(i) == '\r' || newlineText.charAt(i) == '\n')) i++;
             String indentPart = newlineText.substring(i); //spaces and "\t"s that came after "\r\n"
 
-
-            if (indentPart.length() == 0) {
-                // blank line — skip emitting a NEWLINE for parser
-                pending.add(next);
+            // Looking ahead to see if the next character is a COMMENT or NEWLINE -> skip blank_line/comment-only-line
+            int next_chr = _input.LA(1);
+            if (next_chr == '#' || next_chr == '\r' || next_chr == '\n' || next_chr == org.antlr.v4.runtime.Token.EOF) {
+                // Blank or comment-only line -> skip
                 return nextToken();
             }
 
@@ -220,7 +221,8 @@ FLOAT:  NUM '.' NUM;
 fragment ESC: EXPLICIT_LINE_JOINING [vbfnrt"'\\];
 EXPLICIT_LINE_JOINING: '\\';
 F_STRING: 'f' STRING;
-STRING: ('"' | '\'') (~["\\\r\n] | ESC)* ('"' | '\'');
+STRING: '"' (~["\\\r\n] | ESC)* '"'
+      | '\'' (~["\\\r\n] | ESC)* '\'';
 
 BOOLEAN: TRUE | FALSE;
 FALSE    : 'False';
