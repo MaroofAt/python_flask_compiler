@@ -3,7 +3,7 @@ parser grammar PythonParser;
 options {tokenVocab = PythonLexer;}
 
 application
-    : statements EOF
+    : NEWLINE? statements EOF
     ;
 
 statements
@@ -22,7 +22,7 @@ simple_stmt
 small_stmt
     : assignment
     | augmented_assignment
-    | func_call_stmt
+    | expr
     | return_stmt
     | raise_stmt
     | import_stmt
@@ -43,11 +43,10 @@ compound_stmt
 
 
 assignment
-    :(target_list EQUAL)+ expr // Attention: this allows: ``` a = b = c = 1,2,3,4,5 ``` which is wrong, So later in semantic checks we have to reject that case
+    : (target_list EQUAL)+ expr // Attention: this allows: ``` a = b = c = 1,2,3,4,5 ``` which is wrong, So later in semantic checks we have to reject that case
     | typed_assignment
-//    | unpaking_tuples_assignment
-//    | chained_assignement
     ;
+
 augmented_assignment
     : target augmented_assignment_operator expr
     ;
@@ -83,14 +82,6 @@ target_list
 typed_assignment
     : identifier COLON data_type (EQUAL expr)?
     ;
-
-//unpaking_tuples_assignment
-//    : target_list EQUAL expr COMMA expr_list?
-//    ;
-//
-//chained_assignement
-//    : target (EQUAL target)+ EQUAL conditional_expr
-//    ;
 
 
 expr
@@ -192,13 +183,13 @@ strings
     ;
 
 enclosure
-    : list_literal
+    :  dict_literal
     | set_literal
-    | dict_literal
+    | list_literal
     ;
 
 list_literal
-    : LSQB expr_list? RSQB // [1,2,3,4,5,6] , [1+2, a>b<t==6] that is allowed in python
+    : LSQB expr? RSQB // [1,2,3,4,5,6] , [1+2, a>b<t==6] that is allowed in python
     ;
 
 dict_literal
@@ -256,9 +247,6 @@ identifier_equal_expr_argument
     ;
 
 
-expr_list
-    : expr (COMMA expr)* (COMMA)?
-    ;
 
 if_stmt
     : IF expr COLON suite
@@ -332,7 +320,7 @@ decorators
     : decorator+
     ;
 decorator
-    : AT identifier NEWLINE
+    : AT expr NEWLINE
     ;
 
 class_def
@@ -359,9 +347,6 @@ suite
 
 
 // Small Simple Statments
-func_call_stmt
-    : atom call
-    ;
 
 import_stmt
     : IMPORT import_targets
@@ -386,7 +371,7 @@ import_from_target
 
 // Tiny Simple Statements
 return_stmt
-    : RETURN expr_list?
+    : RETURN expr?
     ;
 raise_stmt
     : RAISE (expr (FROM expr)?)?
