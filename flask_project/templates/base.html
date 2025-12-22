@@ -1,14 +1,13 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Product Manager{% endblock %}</title>
     
-    <!-- Link to external CSS file -->
+
     <link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
     
-    <!-- Simple CSS for flash messages close button -->
+
     <style>
         .close-btn:hover {
             opacity: 0.7;
@@ -29,13 +28,13 @@
     </header>
     
     <main class="container">
-        <!-- Flash Messages -->
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
                     <div class="alert alert-{{ category }}">
                         {{ message }}
-                        <!-- Simple close button that redirects to hide message -->
+
                         <a href="#" onclick="this.parentElement.style.display='none'; return false;" 
                            class="close-btn">&times;</a>
                     </div>
