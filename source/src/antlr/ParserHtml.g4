@@ -9,27 +9,34 @@ document
     ;
 
 element
-    : openTag content closeTag   #ElementNode
-    | selfClosingTag             #SelfClosingElementNode
-    | TEXT                       #TextNode
+    : openTag content closeTag              #NormalElementNode
+    | selfClosingTag                        #SelfClosingElementNode
+    | voidElement                           #VoidElementNode
+    | TEXT                                  #TextNode
     ;
 
 openTag
-    : LT TAG_NAME attribute* GT  #OpenTagNode
+    : LT TAG_WS? TAG_NAME (TAG_WS attribute)* TAG_WS? GT
     ;
 
 closeTag
-    : LT SLASH TAG_NAME GT       #CloseTagNode
+    : LT TAG_WS? SLASH TAG_WS? TAG_NAME TAG_WS? GT
     ;
 
 selfClosingTag
-    : LT TAG_NAME attribute* SLASH GT  #SelfClosingTagNode
+    : LT TAG_WS? TAG_NAME (TAG_WS attribute)* TAG_WS? SLASH TAG_WS? GT                                           #SelfClosingTagNode
+    ;
+
+voidElement
+    : LT TAG_WS? VOID_TAG (TAG_WS attribute)* TAG_WS? GT
+
     ;
 
 attribute
-    : TAG_NAME EQUALS STRING     #AttributeNode
+    : TAG_NAME TAG_WS? EQUALS TAG_WS? STRING #NormalAttributeNode
+    | TAG_NAME                               #BooleanAttributeNode
     ;
 
 content
-    : element*                   #ContentNode
+    : element*
     ;

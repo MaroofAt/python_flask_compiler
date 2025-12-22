@@ -1,15 +1,18 @@
 lexer grammar LexerCss;
 
+STAR    : '*';
+DOT     : '.';
+HASH    : '#';
+COLON   : ':';
+COMMA   : ',';
 LBRACE  : '{';
 RBRACE  : '}';
-COLON   : ':';
+LPAREN  : '(';
+RPAREN  : ')';
 SEMI    : ';';
-COMMA   : ',';
-DOT     : '.';
 
-HASH
-    : '#'
-    ;
+AT      : '@';
+MEDIA   : 'media';
 
 HEXCOLOR
     : '#' [0-9a-fA-F]+
@@ -20,7 +23,7 @@ NUMBER
     ;
 
 UNIT
-    : 'px' | 'em' | 'rem' | '%' | 'vh' | 'vw'
+    : 'px' | 'em' | 'rem' | '%' | 'vh' | 'vw' | 's' | 'fr'
     ;
 
 STRING

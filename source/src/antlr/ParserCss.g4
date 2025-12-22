@@ -5,49 +5,62 @@ options {
 }
 
 stylesheet
-    : ruleSet* EOF
+    : (ruleSet | mediaRule)* EOF
+    ;
+
+mediaRule
+    : AT MEDIA mediaCondition LBRACE ruleSet* RBRACE
+
+    ;
+
+mediaCondition
+    : LPAREN IDENT COLON value RPAREN
     ;
 
 ruleSet
-    : selectorList LBRACE declaration* RBRACE     #RuleSetNode
+    : selectorList LBRACE declaration* RBRACE
     ;
 
 selectorList
-    : selector (COMMA selector)*                  #SelectorListNode
+    : selector (COMMA selector)*
     ;
 
 selector
-    : simpleSelector+                             #SelectorNode
+    : simpleSelector+
     ;
 
 simpleSelector
-    : IDENT                #TypeSelector
-    | DOT IDENT            #ClassSelector
-    | HASH IDENT           #IdSelector
+    : STAR                                      #UniversalSelector
+    | IDENT                                     #TypeSelector
+    | DOT IDENT                                 #ClassSelector
+    | HASH IDENT                                #IdSelector
+    | COLON IDENT                               #PseudoClassSelector
     ;
 
 declaration
-    : property COLON value SEMI                   #DeclarationNode
+    : property COLON value SEMI
     ;
 
 property
-    : IDENT                                       #PropertyNode
+    : IDENT
     ;
 
 value
-    : valueSequence (COMMA valueSequence)*    #ValueList
+    : valueSequence (COMMA valueSequence)*
     ;
 
 valueSequence
-    : valuePart+                              #ValueSequenceNode
+    : valuePart+
     ;
-
-
 
 valuePart
-    : HEXCOLOR                                    #ColorValue
-    | NUMBER UNIT?                                #NumberValue
-    | STRING                                      #StringValue
-    | IDENT                                       #IdentValue
+    : HEXCOLOR                                  #ColorValue
+    | NUMBER UNIT?                              #NumberValue
+    | STRING                                    #StringValue
+    | IDENT                                     #IdentifierValue
+    | functionCall                              #FunctionValue
     ;
 
+functionCall
+    : IDENT LPAREN value (COMMA value)* RPAREN
+    ;

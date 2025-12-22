@@ -1,22 +1,35 @@
 lexer grammar LexerHtml;
-LT:'<' -> pushMode(TAG);
 
-TEXT:~[<]+ ;
+LT      : '<' -> pushMode(TAG);
+TEXT    : ~[<]+;
+WS      : [ \t\r\n]+ -> skip;
 
-WS:[ \t\r\n]+ -> skip;
 
 mode TAG;
 
-GT:'>' -> popMode;
+GT      : '>' -> popMode;
+SLASH   : '/';
+EQUALS  : '=';
 
-SLASH:'/';
-
-EQUALS:'=';
-
-STRING:'"' (~["\r\n])* '"';
-
-TAG_NAME:[a-zA-Z] [a-zA-Z0-9_-]*;
-
-TAG_WS:[ \t\r\n]+ -> skip;
+STRING
+    : '"' (~["\r\n])* '"'
+    ;
 
 
+VOID_TAG
+    : 'input'
+    | 'img'
+    | 'br'
+    | 'hr'
+    | 'meta'
+    | 'link'
+    ;
+
+
+TAG_NAME
+    : [a-zA-Z] [a-zA-Z0-9_-]*
+    ;
+
+TAG_WS
+    : [ \t\r\n]+
+    ;
