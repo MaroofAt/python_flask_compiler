@@ -223,6 +223,59 @@ JINJA2_EXPRESSION_OPEN: '{{' -> pushMode(EXPR_MODE);  // FIXED: Direct to EXPR_M
 JINJA2_COMMENT_OPEN: '{#' -> pushMode(COMMENT_MODE);
 
 // ========================================
+// HTML
+// ========================================
+
+HTML_LT      : '<' -> pushMode(TAG);
+//HTML_TEXT    : ~[<]+;
+//HTML_TEXT:
+//    // Match any character that's not <, {, or end of Jinja2 tags
+//    ~[<{]
+//    | '{' ~[{%#]  // { that's not followed by %, #, or another {
+//    | '{{' ~[{}]  // {{ that's not part of }}
+//    | '{%' ~[{}]  // {% that's not part of %}
+//    | '{#' ~[{}]  // {# that's not part of #}
+//    ;
+HTML_WS      : [ \t\r\n]+ -> skip;
+
+
+mode TAG;
+
+HTML_GT      : '>' -> popMode;
+HTML_SLASH   : '/';
+HTML_EQUALS  : '=';
+
+HTML_STRING
+    : '"' (~["\r\n])* '"'
+    ;
+
+
+HTML_VOID_TAG
+    : 'input'
+    | 'img'
+    | 'br'
+    | 'hr'
+    | 'meta'
+    | 'link'
+    ;
+
+
+HTML_TAG_NAME
+    : [a-zA-Z] [a-zA-Z0-9_-]*
+    ;
+
+HTML_TAG_WS
+    : [ \t\r\n]+
+    ;
+
+
+// ========================================
+// CSS
+// ========================================
+
+
+
+// ========================================
 // RAW BLOCKS
 // ========================================
 RAW_START: '{%' WS* 'raw' WS* '%}' -> pushMode(RAW_MODE);

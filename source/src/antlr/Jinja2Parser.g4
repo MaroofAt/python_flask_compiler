@@ -247,7 +247,53 @@ options {tokenVocab = Jinja2Lexer;}
 // ========================================
 // ROOT RULES
 // ========================================
-template: (text | statement | expression | comment | raw_stmt)* EOF;
+template: (text | statement | expression | comment | raw_stmt | document)* EOF;
+
+// ========================================
+// HTML
+// ========================================
+
+document
+    : element                         #DocumentNode
+    ;
+
+element
+    : openTag content closeTag              #NormalElementNode
+    | selfClosingTag                        #SelfClosingElementNode
+    | voidElement                           #VoidElementNode
+    | text                                 #TextNode
+    ;
+
+openTag
+    : HTML_LT HTML_TAG_WS? HTML_TAG_NAME (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_GT                            #OpenTagNode
+    ;
+
+closeTag
+    : HTML_LT HTML_TAG_WS? HTML_SLASH HTML_TAG_WS? HTML_TAG_NAME HTML_TAG_WS? HTML_GT                                          #CloseTagNode
+    ;
+
+selfClosingTag
+    : HTML_LT HTML_TAG_WS? HTML_TAG_NAME (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_SLASH HTML_TAG_WS? HTML_GT                                           #SelfClosingTagNode
+    ;
+
+voidElement
+    : HTML_LT HTML_TAG_WS? HTML_VOID_TAG (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_GT
+                                            #VoidTagElementNode
+    ;
+
+attribute
+    : HTML_TAG_NAME HTML_TAG_WS? HTML_EQUALS HTML_TAG_WS? HTML_STRING #NormalAttributeNode
+    | HTML_TAG_NAME                               #BooleanAttributeNode
+    ;
+
+content
+    : (element | statement | expression)*                             #ContentNode
+    ;
+
+// ========================================
+// END HTML
+// ========================================
+
 
 text: (TEXT_CONTENT | ANY_TEXT)+;
 
@@ -449,7 +495,7 @@ with_target:  JINJA2_NAME JINJA2_EQUAL expr_stmt2;
 // Expression in statement
 expr_stmt: expr;
 
-body: (statement | text | expression | comment)*;
+body: (statement | text  | document| expression | comment)*;
 
 // ========================================
 // UTILITY RULES
