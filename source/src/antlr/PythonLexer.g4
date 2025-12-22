@@ -196,7 +196,7 @@ IF       : 'if';
 //NONLOCAL : 'nonlocal';
 //ASSERT   : 'assert';
 //DEL      : 'del';
-//WITH     : 'with';
+WITH     : 'with';
 //ASYNC    : 'async';
 //YIELD    : 'yield';
 
@@ -222,17 +222,17 @@ fragment ESC: EXPLICIT_LINE_JOINING [vbfnrt"'\\];
 EXPLICIT_LINE_JOINING: '\\';
 F_STRING: 'f' STRING;
 STRING: '"' (~["\\\r\n] | ESC)* '"'
-      | '\'' (~["\\\r\n] | ESC)* '\'';
+      | '\'' (~['\\\r\n] | ESC)* '\'';
 
 BOOLEAN: TRUE | FALSE;
 FALSE    : 'False';
 TRUE     : 'True';
 
-KEYWORD_INT: 'int';
-KEYWORD_FLOAT: 'float';
-KEYWORD_CHAR: 'chr';
-KEYWORD_STRING: 'str';
-KEYWORD_BOOL: 'bool';
+//KEYWORD_INT: 'int';
+//KEYWORD_FLOAT: 'float';
+//KEYWORD_CHAR: 'chr';
+//KEYWORD_STRING: 'str';
+//KEYWORD_BOOL: 'bool';
 
 //METHOD_TYPE: 'type';
 //METHOD_PRINT: 'print';
