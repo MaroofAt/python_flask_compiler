@@ -1,7 +1,7 @@
 parser grammar PythonParser;
 
 options {tokenVocab = PythonLexer;}
-
+// TODO: [ revent return outside function ]
 application
     : NEWLINE? statements EOF
     ;
@@ -36,6 +36,7 @@ compound_stmt
     : if_stmt
     | for_stmt
     | while_stmt
+    | with_stmt
     | try_stmt
     | func_def
     | class_def
@@ -80,7 +81,7 @@ target_list
     ;
 
 typed_assignment
-    : identifier COLON data_type (EQUAL expr)?
+    : identifier COLON identifier (EQUAL expr)?
     ;
 
 
@@ -277,7 +278,7 @@ while_stmt
 
 func_def
     : decorators? DEF NAME LPAR (parameters_list?) RPAR
-        (RARROW (data_type| NONE | identifier /* class identifier */ ))?
+        (RARROW (NONE | identifier))?
         COLON suite
     ;
 
@@ -313,14 +314,21 @@ default_parameter
     ;
 
 non_default_parameter
-    : identifier (COLON data_type)?
+    : identifier (COLON identifier)?
     ;
 
 decorators
     : decorator+
     ;
 decorator
-    : AT expr NEWLINE
+    : AT decorator_expression NEWLINE
+    ;
+decorator_expression
+    : dotted_name
+    | dotted_name call
+    ;
+dotted_name
+    : identifier (DOT identifier)*
     ;
 
 class_def
@@ -332,12 +340,42 @@ inheritance
 
 try_stmt
     : TRY COLON suite
-        NEWLINE (EXCEPT identifier AS identifier COLON suite)+
-        NEWLINE (ELSE COLON suite)?
-        NEWLINE (FINALLY COLON suite)?
+        except_clause+
+        NEWLINE? else_clause?
+        NEWLINE? finally_clause?
 
     | TRY COLON suite
         NEWLINE FINALLY COLON suite
+    ;
+
+else_clause
+    : ELSE COLON suite
+    ;
+
+finally_clause
+    : FINALLY COLON suite
+    ;
+
+except_clause
+    : EXCEPT except_expression (AS identifier)? COLON suite
+    ;
+
+except_expression
+    : exception_type
+    | LPAR exception_type (COMMA exception_type)+ COMMA? RPAR
+    ;
+
+exception_type
+    : identifier (DOT identifier)*
+    ;
+
+
+with_stmt
+    : WITH with_item (COMMA with_item)* COLON suite
+    ;
+
+with_item
+    : expr (AS target)?
     ;
 
 suite
@@ -373,9 +411,20 @@ import_from_target
 return_stmt
     : RETURN expr?
     ;
+
 raise_stmt
-    : RAISE (expr (FROM expr)?)?
+    : RAISE raise_expression?
     ;
+
+raise_expression
+    : exception_instance (FROM exception_instance)?
+    ;
+
+exception_instance
+    : exception_type
+    | exception_type LPAR arguments_list? RPAR
+    ;
+
 global_stmt
     : GLOBAL identifier (COMMA identifier)* COMMA?
     ;
@@ -393,14 +442,6 @@ continue_stmt
 number
     : INT
     | FLOAT
-    ;
-
-data_type
-    : KEYWORD_INT
-    | KEYWORD_FLOAT
-    | KEYWORD_CHAR
-    | KEYWORD_STRING
-    | KEYWORD_BOOL
     ;
 
 identifier
