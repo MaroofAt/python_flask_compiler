@@ -1,245 +1,3 @@
-//parser grammar Jinja2Parser;
-//
-//options {tokenVocab = Jinja2Lexer;}
-//
-//// ========================================
-//// ROOT/TOP-LEVEL RULES
-//// ========================================
-//template: (text | statement | expression | comment)* EOF;
-//
-//text: (TEXT_CONTENT | ANY_TEXT)+;
-//
-//comment: JINJA2_COMMENT_OPEN JINJA2_COMMENT_TEXT* JINJA2_COMMENT_CLOSE;
-//
-//// ========================================
-//// EXPRESSIONS
-//// ========================================
-//expression: JINJA2_EXPRESSION_OPEN expr JINJA2_EXPRESSION_CLOSE;
-//
-//expr: test;
-//
-//test: or_test (JINJA2_IS JINJA2_NAME test_arg?)?;
-//
-//test_arg: JINJA2_EXPR_LPAREN arg_list? JINJA2_EXPR_RPAREN;
-//
-//or_test: and_test ((JINJA2_OR | JINJA2_EXPR_OR) and_test)*;
-//and_test: not_test ((JINJA2_AND | JINJA2_EXPR_AND) not_test)*;
-//not_test: JINJA2_NOT not_test | comparison;
-//
-//comparison:
-//    arith_expr
-//    (comp_op arith_expr)*;
-//
-//comp_op:
-//    JINJA2_EQEQUAL
-//    | JINJA2_NOTEQUAL
-//    | JINJA2_LESS
-//    | JINJA2_GREATER
-//    | JINJA2_LESSEQUAL
-//    | JINJA2_GREATEREQUAL
-//    | JINJA2_EXPR_EQEQUAL
-//    | JINJA2_EXPR_NOTEQUAL
-//    | JINJA2_EXPR_LESS
-//    | JINJA2_EXPR_GREATER
-//    | JINJA2_EXPR_LESSEQUAL
-//    | JINJA2_EXPR_GREATEREQUAL;
-//
-//arith_expr:
-//    term (add_op term)*;
-//
-//add_op:
-//    JINJA2_PLUS
-//    | JINJA2_MINUS
-//    | JINJA2_EXPR_MINUS
-//    | JINJA2_EXPR_PLUS;
-//
-//term:
-//    factor (mul_op factor)*;
-//
-//mul_op:
-//    JINJA2_STAR
-//    | JINJA2_SLASH
-//    | JINJA2_PERCENT;
-//
-//factor:
-//    (JINJA2_PLUS | JINJA2_MINUS) factor
-//    | power;
-//
-//power: primary (JINJA2_STAR JINJA2_STAR factor)?;
-//
-//primary:
-//    atom
-//    | primary trailer;
-//
-//atom:
-//    JINJA2_NAME
-//    | JINJA2_NUMBER
-//    | JINJA2_STRING
-//    | JINJA2_TRUE
-//    | JINJA2_FALSE
-//    | JINJA2_NONE
-//    | JINJA2_EXPR_NAME
-//    | JINJA2_EXPR_NUMBER
-//    | JINJA2_EXPR_LPAREN (expr | testlist_comp)? JINJA2_EXPR_RPAREN
-//    | JINJA2_EXPR_LBRACK list_display? JINJA2_EXPR_RBRACK
-//    | JINJA2_EXPR_LBRACE dict_display? JINJA2_EXPR_RBRACE;
-//
-//trailer:
-//    JINJA2_EXPR_DOT JINJA2_EXPR_NAME
-//    | JINJA2_DOT JINJA2_NAME
-//    | JINJA2_EXPR_LPAREN arg_list? JINJA2_EXPR_RPAREN
-//    | JINJA2_EXPR_LBRACK subscript JINJA2_EXPR_RBRACK;
-//
-//subscript: test | slice_op;
-//slice_op: test? JINJA2_EXPR_COLON test? (JINJA2_EXPR_COLON test?)?;
-//
-//list_display: list_items;
-//list_items: (expr | star_expr) (JINJA2_EXPR_COMMA (expr | star_expr))* JINJA2_EXPR_COMMA?;
-//
-//dict_display:
-//    JINJA2_EXPR_LBRACE
-//    (key_datum (JINJA2_EXPR_COMMA key_datum)* JINJA2_EXPR_COMMA?)?
-//    JINJA2_EXPR_RBRACE;
-//
-//key_datum: expr JINJA2_EXPR_COLON expr;
-//
-//star_expr: JINJA2_STAR expr;
-//
-//testlist_comp: (test | star_expr) (comp_for | (JINJA2_EXPR_COMMA (test | star_expr))* JINJA2_EXPR_COMMA?);
-//
-//// ========================================
-//// FILTERS
-//// ========================================
-//filter_chain: expr (JINJA2_PIPE filter)*;
-//filter: JINJA2_NAME filter_args?;
-//filter_args: JINJA2_EXPR_LPAREN arg_list? JINJA2_EXPR_RPAREN;
-//
-//// ========================================
-//// STATEMENTS
-//// ========================================
-//statement: JINJA2_STATEMENT_OPEN stmt JINJA2_STATEMENT_CLOSE;
-//
-//stmt:
-//    if_stmt
-//    | for_stmt
-//    | block_stmt
-//    | extends_stmt
-//    | include_stmt
-//    | set_stmt
-////    | macro_stmt
-////    | call_stmt
-//    | filter_stmt
-//    | with_stmt
-//    | raw_stmt
-//    | autoescape_stmt
-//    | import_stmt
-//    | from_import_stmt
-//    | expr_stmt;
-//
-//// ========================================
-//// IF STATEMENT
-//// ========================================
-//if_stmt:
-//    JINJA2_IF test if_body
-//    (JINJA2_ELIF test if_body)*
-//    (JINJA2_ELSE body)?;
-//
-//if_body: body;
-//
-//body: (statement | text | expression | comment)*;
-//
-//// ========================================
-//// FOR LOOP
-//// ========================================
-//for_stmt:
-//    JINJA2_FOR expr_list JINJA2_IN expr if_clauses?
-//    JINJA2_COLON for_body
-//    (JINJA2_ELSE JINJA2_COLON else_body)?
-//    JINJA2_ENDFOR;
-//
-//for_body: body;
-//else_body: body;
-//
-//expr_list: expr (JINJA2_COMMA expr)* JINJA2_COMMA?;
-//if_clauses: JINJA2_IF test (JINJA2_AND test)*;
-//
-//// ========================================
-//// BLOCKS AND TEMPLATE INHERITANCE
-//// ========================================
-//block_stmt: JINJA2_BLOCK JINJA2_NAME body JINJA2_ENDBLOCK;
-//extends_stmt: JINJA2_EXTENDS STRING;
-//include_stmt: JINJA2_INCLUDE STRING (JINJA2_WITH JINJA2_NAME JINJA2_EQUAL expr)? (JINJA2_COMMA JINJA2_NAME JINJA2_EQUAL expr)*;
-//import_stmt: JINJA2_IMPORT STRING JINJA2_AS JINJA2_NAME;
-//from_import_stmt: JINJA2_FROM STRING JINJA2_IMPORT JINJA2_NAME (JINJA2_COMMA JINJA2_NAME)* JINJA2_AS JINJA2_NAME?;
-//
-//// ========================================
-//// VARIABLES AND MACROS
-//// ========================================
-//set_stmt: JINJA2_SET JINJA2_NAME JINJA2_EQUAL expr;
-////macro_stmt: JINJA2_MACRO JINJA2_NAME JINJA2_EXPR_LPAREN macro_args? JINJA2_EXPR_RPAREN JINJA2_COLON body JINJA2_ENDMACRO;
-//macro_args: JINJA2_NAME (JINJA2_COMMA JINJA2_NAME)* JINJA2_COMMA?;
-//
-////call_stmt:
-////    JINJA2_CALL expr JINJA2_EXPR_LPAREN call_args? JINJA2_EXPR_RPAREN
-////    JINJA2_COLON call_body JINJA2_ENDCALL;
-//
-//call_args: arg (JINJA2_COMMA arg)* JINJA2_COMMA?;
-//call_body: body;
-//
-//arg: expr | JINJA2_NAME JINJA2_EQUAL expr;
-//
-//// ========================================
-//// OTHER STATEMENTS
-//// ========================================
-//filter_stmt: JINJA2_FILTER JINJA2_NAME filter_args? JINJA2_COLON body JINJA2_ENDFILTER;
-//with_stmt: JINJA2_WITH (with_target JINJA2_COMMA?)+ JINJA2_COLON body JINJA2_ENDWITH;
-//with_target: JINJA2_NAME JINJA2_EQUAL expr;
-//
-//raw_stmt: RAW_START raw_content RAW_END;
-//raw_content: RAW_TEXT+;
-//
-//autoescape_stmt: JINJA2_AUTOESCAPE (JINJA2_TRUE | JINJA2_FALSE) JINJA2_COLON body JINJA2_ENDAUTOESCAPE;
-//
-//expr_stmt: expr;
-//
-//// ========================================
-//// UTILITY RULES
-//// ========================================
-//arg_list: argument (JINJA2_COMMA argument)* JINJA2_COMMA?;
-//argument: expr | JINJA2_NAME JINJA2_EQUAL expr;
-//
-//comp_for: JINJA2_FOR expr_list JINJA2_IN or_test comp_iter?;
-//comp_iter: comp_for | comp_if;
-//comp_if: JINJA2_IF test comp_iter?;
-//
-//// ========================================
-//// LEXER UPDATES NEEDED
-//// ========================================
-///*
-//You need to add these tokens to your lexer:
-//
-//// Text content between Jinja2 tags
-//TEXT_CONTENT: ~[{%{#]+; // Any text except Jinja2 delimiters
-//
-//// HTML/XML tags (optional, for better HTML support)
-//HTML_TAG_OPEN: '<' [a-zA-Z][a-zA-Z0-9-]*;
-//HTML_TAG_CLOSE: '</' [a-zA-Z][a-zA-Z0-9-]* '>';
-//HTML_SELF_CLOSE: '<' [a-zA-Z][a-zA-Z0-9-]* '/>';
-//HTML_ATTRIBUTE: [a-zA-Z_-]+ '=' ('"' ~["]* '"' | '\'' ~[']* '\'');
-//
-//// Raw blocks
-//RAW_START: '{%' [ \t\r\n]* 'raw' [ \t\r\n]* '%}';
-//RAW_END: '{%' [ \t\r\n]* 'endraw' [ \t\r\n]* '%}';
-//RAW_TEXT: ~[{%]+ | '{' ~[%] | '{%' ~[%];
-//
-//// Autoescape blocks
-//AUTOESCAPE: '{%' [ \t\r\n]* 'autoescape' [ \t\r\n]*;
-//ENDAUTOESCAPE: '{%' [ \t\r\n]* 'endautoescape' [ \t\r\n]* '%}';
-//
-//// Any character that doesn't match other tokens
-//ANY_TEXT: .;
-//*/
-
 parser grammar Jinja2Parser;
 
 options {tokenVocab = Jinja2Lexer;}
@@ -247,7 +5,15 @@ options {tokenVocab = Jinja2Lexer;}
 // ========================================
 // ROOT RULES
 // ========================================
-template: (text | statement | expression | comment | raw_stmt | document)* EOF;
+template:
+    (text
+    | statement
+    | expression
+    | comment
+    | raw_stmt
+    | document
+    )*
+    EOF;
 
 // ========================================
 // HTML
@@ -261,272 +27,388 @@ element
     : openTag content closeTag              #NormalElementNode
     | selfClosingTag                        #SelfClosingElementNode
     | voidElement                           #VoidElementNode
-    | text                                 #TextNode
+    | text                                  #HtmlTextNode
     ;
 
 openTag
-    : HTML_LT HTML_TAG_WS? HTML_TAG_NAME (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_GT                            #OpenTagNode
+    : HTML_LT HTML_TAG_WS? HTML_TAG_NAME (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_GT
+        #OpenTagNode
     ;
 
 closeTag
-    : HTML_LT HTML_TAG_WS? HTML_SLASH HTML_TAG_WS? HTML_TAG_NAME HTML_TAG_WS? HTML_GT                                          #CloseTagNode
+    : HTML_LT HTML_TAG_WS? HTML_SLASH HTML_TAG_WS? HTML_TAG_NAME HTML_TAG_WS? HTML_GT
+        #CloseTagNode
     ;
 
 selfClosingTag
-    : HTML_LT HTML_TAG_WS? HTML_TAG_NAME (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_SLASH HTML_TAG_WS? HTML_GT                                           #SelfClosingTagNode
+    : HTML_LT HTML_TAG_WS? HTML_TAG_NAME (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_SLASH HTML_TAG_WS? HTML_GT
+        #SelfClosingTagNode
     ;
 
 voidElement
     : HTML_LT HTML_TAG_WS? HTML_VOID_TAG (HTML_TAG_WS attribute)* HTML_TAG_WS? HTML_GT
-                                            #VoidTagElementNode
+        #VoidTagElementNode
     ;
 
 attribute
-    : HTML_TAG_NAME HTML_TAG_WS? HTML_EQUALS HTML_TAG_WS? HTML_STRING #NormalAttributeNode
-    | HTML_TAG_NAME                               #BooleanAttributeNode
+    : HTML_TAG_NAME HTML_TAG_WS? HTML_EQUALS HTML_TAG_WS? HTML_STRING
+        #NormalAttributeNode
+    | HTML_TAG_NAME
+        #BooleanAttributeNode
     ;
 
 content
-    : (element | statement | expression)*                             #ContentNode
+    : (element | statement | expression)*
+        #ContentNode
     ;
 
 // ========================================
 // END HTML
 // ========================================
 
+text: (TEXT_CONTENT | ANY_TEXT)+
+    #TextContent;
 
-text: (TEXT_CONTENT | ANY_TEXT)+;
-
-comment: JINJA2_COMMENT_OPEN JINJA2_COMMENT_TEXT* JINJA2_COMMENT_CLOSE;
+comment: JINJA2_COMMENT_OPEN JINJA2_COMMENT_TEXT* JINJA2_COMMENT_CLOSE
+    #CommentNode;
 
 // ========================================
 // EXPRESSIONS
 // ========================================
-expression: JINJA2_EXPRESSION_OPEN expr JINJA2_EXPRESSION_CLOSE;
+expression: JINJA2_EXPRESSION_OPEN expr JINJA2_EXPRESSION_CLOSE
+    #ExpressionNode;
 
-expr: test  ;
+expr: test
+    #ExprTest;
 
-test: or_test (JINJA2_EXPR_IS name test_arg?)?;
+test: or_test (JINJA2_EXPR_IS name test_arg?)?
+    #TestNode;
 
-name: JINJA2_EXPR_NAME | JINJA2_NAME;
+name: JINJA2_EXPR_NAME                 #ExprName
+    | JINJA2_NAME                      #StmtName;
 
-test_arg: JINJA2_EXPR_LPAREN arg_list? JINJA2_EXPR_RPAREN;
+test_arg: JINJA2_EXPR_LPAREN arg_list? JINJA2_EXPR_RPAREN
+    #TestArgNode;
 
-or_test: and_test (JINJA2_EXPR_OR and_test)*;
-and_test: not_test (JINJA2_EXPR_AND not_test)*;
-not_test: JINJA2_EXPR_NOT not_test | comparison;
+or_test: and_test (JINJA2_EXPR_OR and_test)*
+    #OrTestNode;
 
-comparison: arith_expr (comp_op arith_expr)*;
+and_test: not_test (JINJA2_EXPR_AND not_test)*
+    #AndTestNode;
+
+not_test: JINJA2_EXPR_NOT not_test
+    #NotTestNode
+    | comparison
+    #ComparisonNotTest;
+
+comparison: arith_expr (comp_op arith_expr)*
+    #ComparisonNode;
 
 comp_op:
-    JINJA2_EXPR_EQEQUAL
-    | JINJA2_EXPR_NOTEQUAL
-    | JINJA2_EXPR_LESS
-    | JINJA2_EXPR_GREATER
-    | JINJA2_EXPR_LESSEQUAL
-    | JINJA2_EXPR_GREATEREQUAL;
+    JINJA2_EXPR_EQEQUAL                #ExprEqualOp
+    | JINJA2_EXPR_NOTEQUAL             #ExprNotEqualOp
+    | JINJA2_EXPR_LESS                 #ExprLessOp
+    | JINJA2_EXPR_GREATER              #ExprGreaterOp
+    | JINJA2_EXPR_LESSEQUAL            #ExprLessEqualOp
+    | JINJA2_EXPR_GREATEREQUAL         #ExprGreaterEqualOp;
 
-arith_expr: term (add_op term)*;
+arith_expr: term (add_op term)*
+    #ArithExprNode;
 
-add_op: JINJA2_EXPR_PLUS | JINJA2_EXPR_MINUS;
+add_op: JINJA2_EXPR_PLUS               #ExprPlusOp
+    | JINJA2_EXPR_MINUS                #ExprMinusOp;
 
-term: factor (mul_op factor)*;
+term: factor (mul_op factor)*
+    #TermNode;
 
-mul_op: JINJA2_EXPR_STAR | JINJA2_EXPR_SLASH | JINJA2_EXPR_PERCENT;
+mul_op: JINJA2_EXPR_STAR               #ExprMultiplyOp
+    | JINJA2_EXPR_SLASH                #ExprDivideOp
+    | JINJA2_EXPR_PERCENT              #ExprModuloOp;
 
-factor: (JINJA2_EXPR_PLUS | JINJA2_EXPR_MINUS) factor | power;
+factor: (JINJA2_EXPR_PLUS | JINJA2_EXPR_MINUS) factor
+    #UnaryFactorNode
+    | power
+    #PowerFactorNode;
 
-power: primary (JINJA2_EXPR_STAR JINJA2_EXPR_STAR factor)?;
+power: primary (JINJA2_EXPR_STAR JINJA2_EXPR_STAR factor)?
+    #PowerNode;
 
-primary: atom (trailer)*;
+primary: atom (trailer)*
+    #PrimaryNode;
 
 atom:
-    name
-    | JINJA2_EXPR_NUMBER
-    | JINJA2_EXPR_STRING
-    | JINJA2_EXPR_TRUE
-    | JINJA2_EXPR_FALSE
-    | JINJA2_EXPR_NONE
+    name                                    #NameAtom
+    | JINJA2_EXPR_NUMBER                    #NumberAtom
+    | JINJA2_EXPR_STRING                    #StringAtom
+    | JINJA2_EXPR_TRUE                      #TrueAtom
+    | JINJA2_EXPR_FALSE                     #FalseAtom
+    | JINJA2_EXPR_NONE                      #NoneAtom
     | JINJA2_EXPR_LPAREN expr JINJA2_EXPR_RPAREN
+        #ParenAtom
     | JINJA2_EXPR_LBRACK list_display? JINJA2_EXPR_RBRACK
+        #ListAtom
     | JINJA2_EXPR_LBRACE dict_display? JINJA2_EXPR_RBRACE
-    | JINJA2_EXPR_PIPE filter_args; // TODO another ckeck3
+        #DictAtom
+    | JINJA2_EXPR_PIPE filter_args
+        #FilterAtom;
 
 trailer:
     JINJA2_EXPR_DOT name
+        #AttributeTrailer
     | JINJA2_EXPR_LPAREN arg_list? JINJA2_EXPR_RPAREN
+        #CallTrailer
     | JINJA2_EXPR_LBRACK subscript JINJA2_EXPR_RBRACK
-    | JINJA2_EXPR_PIPE filter_args; // TODO another ckeck3
+        #SubscriptTrailer
+    | JINJA2_EXPR_PIPE filter_args
+        #FilterTrailer;
 
-subscript: test | slice_op;
-slice_op: test? JINJA2_EXPR_COLON test? (JINJA2_EXPR_COLON test?)?;
+subscript: test                           #TestSubscript
+    | slice_op                            #SliceSubscript;
 
-list_display: list_items;
-list_items: (expr | star_expr) (JINJA2_EXPR_COMMA (expr | star_expr))* JINJA2_EXPR_COMMA?;
+slice_op: test? JINJA2_EXPR_COLON test? (JINJA2_EXPR_COLON test?)?
+    #SliceOpNode;
+
+list_display: list_items
+    #ListDisplayNode;
+
+list_items: (expr | star_expr) (JINJA2_EXPR_COMMA (expr | star_expr))* JINJA2_EXPR_COMMA?
+    #ListItemsNode;
 
 dict_display:
     JINJA2_EXPR_LBRACE
     (key_datum (JINJA2_EXPR_COMMA key_datum)* JINJA2_EXPR_COMMA?)?
-    JINJA2_EXPR_RBRACE;
+    JINJA2_EXPR_RBRACE
+    #DictDisplayNode;
 
-key_datum: expr JINJA2_EXPR_COLON expr;
+key_datum: expr JINJA2_EXPR_COLON expr
+    #KeyDatumNode;
 
-star_expr: JINJA2_EXPR_STAR expr;
+star_expr: JINJA2_EXPR_STAR expr
+    #StarExprNode;
 
-testlist_comp: (test | star_expr) (comp_for | (JINJA2_EXPR_COMMA (test | star_expr))* JINJA2_EXPR_COMMA?);
+testlist_comp: (test | star_expr) (comp_for | (JINJA2_EXPR_COMMA (test | star_expr))* JINJA2_EXPR_COMMA?)
+    #TestlistCompNode;
 
 // ========================================
 // FILTERS
 // ========================================
-//filter_chain: expr (JINJA2_EXPR_PIPE filter)*;
-//filter: name filter_args?;
-filter_args: /*JINJA2_EXPR_LPAREN*/ arg_list? /*JINJA2_EXPR_RPAREN*/;
+filter_args: arg_list?
+    #FilterArgsNode;
 
 // ========================================
-// STATEMENTS (simplified for now)
+// STATEMENTS
 // ========================================
-statement: JINJA2_STATEMENT_OPEN stmt JINJA2_STATEMENT_CLOSE;
+statement: JINJA2_STATEMENT_OPEN stmt JINJA2_STATEMENT_CLOSE
+    #StatementNode;
 
-stmt: if_stmt
-    | for_stmt
-    | set_stmt
-    | expr_stmt2
-    | extends_stmt
-    | block_stmt
-    | with_stmt
-    | include_stmt
-    | import_stmt
-    | from_import_stmt
-    | filter_stmt
-    | autoescape_stmt;
+stmt: if_stmt                           #IfStatement
+    | for_stmt                          #ForStatement
+    | set_stmt                          #SetStatement
+    | expr_stmt2                        #ExprStatement
+    | extends_stmt                      #ExtendsStatement
+    | block_stmt                        #BlockStatement
+    | with_stmt                         #WithStatement
+    | include_stmt                      #IncludeStatement
+    | import_stmt                       #ImportStatement
+    | from_import_stmt                  #FromImportStatement
+    | filter_stmt                       #FilterStatement
+    | autoescape_stmt                   #AutoescapeStatement;
 
 // IF statement
 if_stmt: JINJA2_IF test_stmt JINJA2_STATEMENT_CLOSE body
     (JINJA2_STATEMENT_OPEN JINJA2_ELIF test_stmt JINJA2_STATEMENT_CLOSE body)*
     (JINJA2_STATEMENT_OPEN JINJA2_ELSE JINJA2_STATEMENT_CLOSE body)?
-    JINJA2_STATEMENT_OPEN JINJA2_ENDIF;
+    JINJA2_STATEMENT_OPEN JINJA2_ENDIF
+    #IfStmtNode;
 
-test_stmt: or_test_stmt (JINJA2_IS name test_arg_stmt?)?;
+test_stmt: or_test_stmt (JINJA2_IS name test_arg_stmt?)?
+    #TestStmtNode;
 
-test_arg_stmt: JINJA2_LPAREN arg_list? JINJA2_RPAREN;
+test_arg_stmt: JINJA2_LPAREN arg_list_stmt? JINJA2_RPAREN
+    #TestArgStmtNode;
 
-arg_list_stmt: argument_stmt (JINJA2_COMMA argument_stmt)* JINJA2_COMMA?;
+arg_list_stmt: argument_stmt (JINJA2_COMMA argument_stmt)* JINJA2_COMMA?
+    #ArgListStmtNode;
 
-argument_stmt: expr_stmt2 | name JINJA2_EQUAL expr_stmt2;
+argument_stmt: expr_stmt2               #PositionalArgStmt
+    | name JINJA2_EQUAL expr_stmt2      #KeywordArgStmt;
 
-or_test_stmt: and_test_stmt (JINJA2_OR and_test_stmt)*;
+or_test_stmt: and_test_stmt (JINJA2_OR and_test_stmt)*
+    #OrTestStmtNode;
 
-and_test_stmt: not_test_stmt (JINJA2_AND not_test_stmt)*;
+and_test_stmt: not_test_stmt (JINJA2_AND not_test_stmt)*
+    #AndTestStmtNode;
 
-not_test_stmt: JINJA2_NOT not_test_stmt | comparison_stmt;
+not_test_stmt: JINJA2_NOT not_test_stmt
+    #NotTestStmtNode
+    | comparison_stmt
+    #ComparisonStmtNotTest;
 
-comparison_stmt: arith_stmt (comp_op_stmt arith_stmt)*;
+comparison_stmt: arith_stmt (comp_op_stmt arith_stmt)*
+    #ComparisonStmtNode;
 
 comp_op_stmt:
-    JINJA2_EQEQUAL
-    | JINJA2_NOTEQUAL
-    | JINJA2_LESS
-    | JINJA2_GREATER
-    | JINJA2_LESSEQUAL
-    | JINJA2_GREATEREQUAL;
+    JINJA2_EQEQUAL                      #StmtEqualOp
+    | JINJA2_NOTEQUAL                   #StmtNotEqualOp
+    | JINJA2_LESS                       #StmtLessOp
+    | JINJA2_GREATER                    #StmtGreaterOp
+    | JINJA2_LESSEQUAL                  #StmtLessEqualOp
+    | JINJA2_GREATEREQUAL               #StmtGreaterEqualOp;
 
+arith_stmt: term_stmt (add_op_stmt term_stmt)*
+    #ArithStmtNode;
 
-arith_stmt: term_stmt (add_op_stmt term_stmt)*;
+add_op_stmt: JINJA2_PLUS                #StmtPlusOp
+    | JINJA2_MINUS                      #StmtMinusOp;
 
-add_op_stmt: JINJA2_PLUS | JINJA2_MINUS;
+term_stmt: factor_stmt (mul_op_stmt factor_stmt)*
+    #TermStmtNode;
 
-term_stmt: factor_stmt (mul_op_stmt factor_stmt)*;
+mul_op_stmt: JINJA2_STAR                #StmtMultiplyOp
+    | JINJA2_SLASH                      #StmtDivideOp
+    | JINJA2_PERCENT                    #StmtModuloOp;
 
-mul_op_stmt: JINJA2_STAR | JINJA2_SLASH | JINJA2_PERCENT;
+factor_stmt: (JINJA2_PLUS | JINJA2_MINUS) factor_stmt
+    #UnaryFactorStmtNode
+    | power_stmt
+    #PowerFactorStmtNode;
 
-factor_stmt: (JINJA2_PLUS | JINJA2_MINUS) factor_stmt | power_stmt;
+power_stmt: primary_stmt (JINJA2_STAR JINJA2_STAR factor_stmt)?
+    #PowerStmtNode;
 
-power_stmt: primary_stmt (JINJA2_STAR JINJA2_STAR factor_stmt)?;
-
-primary_stmt: atom_stmt (trailer_stmt)*;
+primary_stmt: atom_stmt (trailer_stmt)*
+    #PrimaryStmtNode;
 
 atom_stmt:
-    name
-    | JINJA2_NUMBER
-    | JINJA2_STRING
-    | JINJA2_TRUE
-    | JINJA2_FALSE
-    | JINJA2_NONE
+    name                                #StmtNameAtom
+    | JINJA2_NUMBER                     #StmtNumberAtom
+    | JINJA2_STRING                     #StmtStringAtom
+    | JINJA2_TRUE                       #StmtTrueAtom
+    | JINJA2_FALSE                      #StmtFalseAtom
+    | JINJA2_NONE                       #StmtNoneAtom
     | JINJA2_LPAREN expr_stmt2 JINJA2_RPAREN
+        #StmtParenAtom
     | JINJA2_LBRACK list_display_stmt? JINJA2_RBRACK
+        #StmtListAtom
     | JINJA2_LBRACE dict_display_stmt? JINJA2_RBRACE
-    | JINJA2_PIPE filter_args_stmt; // TODO just check1
+        #StmtDictAtom
+    | JINJA2_PIPE filter_args_stmt
+        #StmtFilterAtom;
 
 trailer_stmt:
     JINJA2_DOT name
+        #StmtAttributeTrailer
     | JINJA2_LPAREN arg_list_stmt? JINJA2_RPAREN
+        #StmtCallTrailer
     | JINJA2_LBRACK subscript_stmt JINJA2_RBRACK
-    | JINJA2_PIPE filter_args_stmt; // TODO just check2
+        #StmtSubscriptTrailer
+    | JINJA2_PIPE filter_args_stmt
+        #StmtFilterTrailer;
 
-expr_stmt2: test_stmt;
+expr_stmt2: test_stmt
+    #ExprStmt2Node;
 
-list_display_stmt: list_items_stmt;
-list_items_stmt: (expr_stmt2 | star_expr_stmt) (JINJA2_EXPR_COMMA (expr_stmt2 | star_expr_stmt))* JINJA2_EXPR_COMMA?;
+list_display_stmt: list_items_stmt
+    #ListDisplayStmtNode;
 
-star_expr_stmt: JINJA2_STAR expr_stmt2;
+list_items_stmt: (expr_stmt2 | star_expr_stmt) (JINJA2_EXPR_COMMA (expr_stmt2 | star_expr_stmt))* JINJA2_EXPR_COMMA?
+    #ListItemsStmtNode;
+
+star_expr_stmt: JINJA2_STAR expr_stmt2
+    #StarExprStmtNode;
 
 dict_display_stmt:
     JINJA2_LBRACE
     (key_datum_stmt (JINJA2_COMMA key_datum_stmt)* JINJA2_COMMA?)?
-    JINJA2_RBRACE;
+    JINJA2_RBRACE
+    #DictDisplayStmtNode;
 
-key_datum_stmt: expr_stmt2 JINJA2_COLON expr_stmt2;
+key_datum_stmt: expr_stmt2 JINJA2_COLON expr_stmt2
+    #KeyDatumStmtNode;
 
-subscript_stmt: test_stmt | slice_op_stmt;
-slice_op_stmt: test_stmt? JINJA2_COLON test_stmt? (JINJA2_COLON test_stmt?)?;
+subscript_stmt: test_stmt               #StmtTestSubscript
+    | slice_op_stmt                     #StmtSliceSubscript;
 
-
-
-// FOR loop
-for_stmt: JINJA2_FOR (name | name JINJA2_COMMA name) JINJA2_IN expr_stmt2 JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDFOR;
-
-// SET variable
-set_stmt: JINJA2_SET name JINJA2_EQUAL expr_stmt2;
+slice_op_stmt: test_stmt? JINJA2_COLON test_stmt? (JINJA2_COLON test_stmt?)?
+    #SliceOpStmtNode;
 
 
-with_stmt: JINJA2_WITH (with_target JINJA2_COMMA?)+  JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDWITH;
-with_target:  JINJA2_NAME JINJA2_EQUAL expr_stmt2;
+for_stmt: JINJA2_FOR (name | name JINJA2_COMMA name) JINJA2_IN expr_stmt2 JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDFOR
+    #ForStmtNode;
 
-// Expression in statement
-expr_stmt: expr;
 
-body: (statement | text  | document| expression | comment)*;
+set_stmt: JINJA2_SET name JINJA2_EQUAL expr_stmt2
+    #SetStmtNode;
+
+with_stmt: JINJA2_WITH (with_target JINJA2_COMMA?)+  JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDWITH
+    #WithStmtNode;
+
+with_target:  JINJA2_NAME JINJA2_EQUAL expr_stmt2
+    #WithTargetNode;
+
+
+expr_stmt: expr
+    #ExprStmtNode;
+
+
+body:
+    (statement
+    | text
+    | document
+    | expression
+    | comment
+    )*
+    #BodyNode;
 
 // ========================================
 // UTILITY RULES
 // ========================================
-arg_list: argument (JINJA2_EXPR_COMMA argument)* JINJA2_EXPR_COMMA?;
-argument: expr | name JINJA2_EXPR_EQUAL expr;
+arg_list: argument (JINJA2_EXPR_COMMA argument)* JINJA2_EXPR_COMMA?
+    #ArgListNode;
 
-comp_for: JINJA2_FOR name JINJA2_IN or_test comp_iter?;
-comp_iter: comp_for | comp_if;
-comp_if: JINJA2_IF test comp_iter?;
+argument: expr                          #PositionalArgument
+    | name JINJA2_EXPR_EQUAL expr       #KeywordArgument;
 
+comp_for: JINJA2_FOR name JINJA2_IN or_test comp_iter?
+    #CompForNode;
 
-block_stmt: JINJA2_BLOCK JINJA2_NAME JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDBLOCK;
-extends_stmt: JINJA2_EXTENDS JINJA2_STRING;
-include_stmt: JINJA2_INCLUDE JINJA2_STRING (JINJA2_WITH JINJA2_NAME JINJA2_EQUAL expr)? (JINJA2_COMMA JINJA2_NAME JINJA2_EQUAL expr)*;
-import_stmt: JINJA2_IMPORT JINJA2_STRING JINJA2_AS JINJA2_NAME;
-from_import_stmt: JINJA2_FROM JINJA2_STRING JINJA2_IMPORT JINJA2_NAME (JINJA2_COMMA JINJA2_NAME)* JINJA2_AS JINJA2_NAME?;
+comp_iter: comp_for                     #CompIterFor
+    | comp_if                           #CompIterIf;
 
+comp_if: JINJA2_IF test comp_iter?
+    #CompIfNode;
 
+block_stmt: JINJA2_BLOCK JINJA2_NAME JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDBLOCK
+    #BlockStmtNode;
 
-filter_stmt: JINJA2_FILTER JINJA2_NAME  filter_args_stmt? JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDFILTER;
+extends_stmt: JINJA2_EXTENDS JINJA2_STRING
+    #ExtendsStmtNode;
 
-//filter2: name filter_args?;
-filter_args_stmt: /*JINJA2_LPAREN*/ arg_list_stmt? /*JINJA2_RPAREN*/;
+include_stmt: JINJA2_INCLUDE JINJA2_STRING (JINJA2_WITH JINJA2_NAME JINJA2_EQUAL expr)? (JINJA2_COMMA JINJA2_NAME JINJA2_EQUAL expr)*
+    #IncludeStmtNode;
+
+import_stmt: JINJA2_IMPORT JINJA2_STRING JINJA2_AS JINJA2_NAME
+    #ImportStmtNode;
+
+from_import_stmt: JINJA2_FROM JINJA2_STRING JINJA2_IMPORT JINJA2_NAME (JINJA2_COMMA JINJA2_NAME)* JINJA2_AS JINJA2_NAME?
+    #FromImportStmtNode;
+
+filter_stmt: JINJA2_FILTER JINJA2_NAME  filter_args_stmt? JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDFILTER
+    #FilterStmtNode;
+
+filter_args_stmt: arg_list_stmt?
+    #FilterArgsStmtNode;
 
 // ========================================
 // RAW BLOCK
 // ========================================
 
-raw_stmt: RAW_START RAW_TEXT* RAW_END;
+raw_stmt: RAW_START RAW_TEXT* RAW_END
+    #RawStmtNode;
 
-//raw_body: (text | statement | expression | comment)* ;\
+// ========================================
+// AUTOESCAPE
+// ========================================
 
-autoescape_stmt: JINJA2_AUTOESCAPE (JINJA2_TRUE | JINJA2_FALSE) JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDAUTOESCAPE;
+autoescape_stmt: JINJA2_AUTOESCAPE (JINJA2_TRUE | JINJA2_FALSE) JINJA2_STATEMENT_CLOSE body JINJA2_STATEMENT_OPEN JINJA2_ENDAUTOESCAPE
+    #AutoescapeStmtNode;
