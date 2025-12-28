@@ -44,8 +44,9 @@ compound_stmt
 
 
 assignment
-    : (target_list EQUAL)+ expr // Attention: this allows: ``` a = b = c = 1,2,3,4,5 ``` which is wrong, So later in semantic checks we have to reject that case
-    | typed_assignment
+    : (target_list EQUAL)+ expr     #Regular_Assignment
+    // 👆 Attention: this allows: ``` a = b = c = 1,2,3,4,5 ``` which is wrong, So later in semantic checks we have to reject that case
+    | typed_assignment              #Typed_Assignment
     ;
 
 augmented_assignment
@@ -98,8 +99,8 @@ tuple_expr // Important Note for AST: in AST we must handle "(a)" as an atom not
     ;
 
 conditional_expr
-    : or_expr
-    | or_expr IF or_expr ELSE conditional_expr // short if statement
+    : or_expr                                           #Or_Expr
+    | or_expr IF or_expr ELSE conditional_expr          #Or_Expr_Short_If   // short if statement
     ;
 
 or_expr
@@ -173,10 +174,10 @@ atom
     ;
 
 literal
-    : number
-    | strings
-    | BOOLEAN
-    | NONE
+    : number            #Literal_Number
+    | strings           #Literal_String
+    | BOOLEAN           #Literal_Bool_None
+    | NONE              #Literal_Bool_None
     ;
 strings
     : STRING
@@ -184,7 +185,7 @@ strings
     ;
 
 enclosure
-    :  dict_literal
+    : dict_literal
     | set_literal
     | list_literal
     ;
@@ -194,8 +195,8 @@ list_literal
     ;
 
 dict_literal
-    : LBRACE RBRACE
-    | LBRACE dict_items RBRACE
+    : LBRACE RBRACE                 #Dict_Literal_Empty
+    | LBRACE dict_items RBRACE      #Dict_Literal
     ;
 
 dict_items
@@ -297,8 +298,8 @@ parameters_list
 
 args_kwargs_parameters_list
     : args_parameter
-        (COMMA kwargs_parameter)?
-    | kwargs_parameter
+        (COMMA kwargs_parameter)?                           #Args_Kwargs_Parameters_List_Full
+    | kwargs_parameter                                      #Args_Kwargs_Parameters_List_Kwargs
     ;
 
 args_parameter
@@ -342,10 +343,10 @@ try_stmt
     : TRY COLON suite
         except_clause+
         NEWLINE? else_clause?
-        NEWLINE? finally_clause?
+        NEWLINE? finally_clause?                        #Try_Stmt
 
     | TRY COLON suite
-        NEWLINE FINALLY COLON suite
+        NEWLINE FINALLY COLON suite                     #Try_Finally_Stmt
     ;
 
 else_clause
@@ -387,8 +388,8 @@ suite
 // Small Simple Statments
 
 import_stmt
-    : IMPORT import_targets
-    | FROM import_from_target IMPORT import_targets
+    : IMPORT import_targets                             #Import_Stmt
+    | FROM import_from_target IMPORT import_targets     #Import_From_Stmt
     ;
 
 import_targets
@@ -396,15 +397,15 @@ import_targets
     ;
 
 import_target
-    : identifier (AS identifier)?
-    | identifier (DOT identifier)+ (AS identifier)?
-    | STAR
+    : identifier (AS identifier)?                       #Import_Target
+    | identifier (DOT identifier)+ (AS identifier)?     #Import_Target_Dot_Target
+    | STAR                                              #Import_Star
     ;
 
 import_from_target
-    : identifier (DOT identifier)*
-    | (DOT | ELLIPSIS)+
-    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*
+    : identifier (DOT identifier)*                      #Import_From_Target
+    | (DOT | ELLIPSIS)+                                 #Import_From_Dots
+    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*    #Import_From_Dots_Target
     ;
 
 // Tiny Simple Statements
