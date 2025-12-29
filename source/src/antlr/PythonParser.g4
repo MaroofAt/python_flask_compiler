@@ -403,9 +403,9 @@ import_target
     ;
 
 import_from_target
-    : identifier (DOT identifier)*
-    | (DOT | ELLIPSIS)+
-    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*
+    : identifier (DOT identifier)*                      #Import_From_Target
+    | (DOT | ELLIPSIS)+                                 #Import_From_Target_Dots
+    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*    #Import_From_Target
     ;
 
 // Tiny Simple Statements

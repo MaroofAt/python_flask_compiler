@@ -1,6 +1,5 @@
 package classes.python;
 
-import java.util.ArrayList;
 
 public class Power_Expr {
     private Primary primary;

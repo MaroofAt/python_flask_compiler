@@ -1,6 +1,5 @@
 package classes.python;
 
-import java.util.ArrayList;
 
 public class Class_Def extends Compound_Stmt{
     private Decorators decorators; //nullable

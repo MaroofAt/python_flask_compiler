@@ -1,6 +1,5 @@
 package classes.python;
 
-import java.util.ArrayList;
 
 public class Conditional_Expr {
     private Or_Expr or_expr; //nullable

@@ -1,6 +1,5 @@
 package classes.python;
 
-import java.util.ArrayList;
 
 public class Not_Expr {
     private Not_Expr not_expr; //nullable
