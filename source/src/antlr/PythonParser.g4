@@ -73,8 +73,8 @@ target_atom
     ;
 
 target_postfix
-    : attribute_ref
-    | subscription
+    : attribute_ref     #Target_Postfix_Attribute_Ref
+    | subscription      #Target_Postfix_Subscription
     ;
 
 target_list
@@ -167,10 +167,10 @@ attribute_ref
     ;
 
 atom
-    : identifier
-    | literal
-    | enclosure
-    | LPAR expr RPAR
+    : identifier            #Atom_Identifier
+    | literal               #Atom_Literal
+    | enclosure             #Atom_Enclosure
+    | LPAR expr RPAR        #Atom_Expr
     ;
 
 literal
@@ -195,8 +195,8 @@ list_literal
     ;
 
 dict_literal
-    : LBRACE RBRACE                 #Dict_Literal_Empty
-    | LBRACE dict_items RBRACE      #Dict_Literal
+    : LBRACE RBRACE
+    | LBRACE dict_items RBRACE
     ;
 
 dict_items
@@ -398,14 +398,14 @@ import_targets
 
 import_target
     : identifier (AS identifier)?                       #Import_Target
-    | identifier (DOT identifier)+ (AS identifier)?     #Import_Target_Dot_Target
+    | identifier (DOT identifier)+ (AS identifier)?     #Import_Target
     | STAR                                              #Import_Star
     ;
 
 import_from_target
-    : identifier (DOT identifier)*                      #Import_From_Target
-    | (DOT | ELLIPSIS)+                                 #Import_From_Dots
-    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*    #Import_From_Dots_Target
+    : identifier (DOT identifier)*
+    | (DOT | ELLIPSIS)+
+    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*
     ;
 
 // Tiny Simple Statements
