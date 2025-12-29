@@ -1,5 +1,3 @@
 package classes.python;
 
-public class Assignment extends Small_Stmt{
-
-}
+public class Assignment extends Small_Stmt{}

@@ -1,4 +1,3 @@
 package classes.python;
 
-public class Statement {
-}
+public class Statement {}

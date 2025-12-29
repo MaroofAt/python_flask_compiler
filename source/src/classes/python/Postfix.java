@@ -1,4 +1,3 @@
 package classes.python;
 
-public class Postfix {
-}
+public class Postfix {}
