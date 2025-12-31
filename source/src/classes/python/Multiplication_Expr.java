@@ -16,7 +16,7 @@ public class Multiplication_Expr {
         this.unary_expr_arraylist = unary_expr_arraylist;
     }
 
-    public void add_to_and_expr_arraylist(Unary_Expr ex){
+    public void add_to_unary_expr_arraylist(Unary_Expr ex){
         this.unary_expr_arraylist.add(ex);
     }
 

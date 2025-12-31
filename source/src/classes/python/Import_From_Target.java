@@ -3,7 +3,7 @@ package classes.python;
 
 import java.util.ArrayList;
 
-public class Import_From_Target {
+public class Import_From_Target{
     private ArrayList<Identifier> identifier_arraylist;
 
     public ArrayList<Identifier> getIdentifier_arraylist() {

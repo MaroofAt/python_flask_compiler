@@ -1,6 +1,6 @@
 package classes.python;
 
-public class Augmented_Assignment {
+public class Augmented_Assignment extends Small_Stmt{
     private Target target;
     private Augmented_Assignment_Operator augmented_assignment_operator;
     private Expr expr;

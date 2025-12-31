@@ -1,5 +1,7 @@
 package classes.python;
 
+import classes.with_arr_ex;
+
 import java.util.ArrayList;
 
 public class Target_List {
@@ -14,6 +16,10 @@ public class Target_List {
     }
     public void setTarget_arraylist(ArrayList<Target> target_arraylist) {
         this.target_arraylist = target_arraylist;
+    }
+
+    public void add_to_target_arraylist(Target ex){
+        this.target_arraylist.add(ex);
     }
 
     @Override

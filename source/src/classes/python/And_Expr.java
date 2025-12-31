@@ -16,7 +16,7 @@ public class And_Expr {
         this.not_expr_arraylist = not_expr_arraylist;
     }
 
-    public void add_to_and_expr_arraylist(Not_Expr ex){
+    public void add_to_not_expr_arraylist(Not_Expr ex){
         this.not_expr_arraylist.add(ex);
     }
 

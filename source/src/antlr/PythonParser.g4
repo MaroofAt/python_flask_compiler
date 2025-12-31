@@ -298,8 +298,8 @@ parameters_list
 
 args_kwargs_parameters_list
     : args_parameter
-        (COMMA kwargs_parameter)?                           #Args_Kwargs_Parameters_List_Full
-    | kwargs_parameter                                      #Args_Kwargs_Parameters_List_Kwargs
+        (COMMA kwargs_parameter)?
+    | kwargs_parameter
     ;
 
 args_parameter

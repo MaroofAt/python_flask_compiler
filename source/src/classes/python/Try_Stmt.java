@@ -28,6 +28,9 @@ public class Try_Stmt extends Compound_Stmt{
     public void setExcept_clause_arraylist(ArrayList<Except_Clause> except_clause_arraylist) {
         this.except_clause_arraylist = except_clause_arraylist;
     }
+    public void add_to_except_clause_arraylist(Except_Clause ex){
+        this.except_clause_arraylist.add(ex);
+    }
 
     public Else_Clause getElse_clause() {
         if(else_clause == null){

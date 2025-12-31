@@ -1,58 +1,44 @@
 package classes.python;
 
-import classes.with_arr_ex;
-
 import java.util.ArrayList;
 
 public class Args_Kwargs_Parameters_List {
-    private ArrayList<Args_Parameter> args_parameter_arraylist; //nullable
-    private ArrayList<Kwargs_Parameter> kwargs_parameter_arraylist; //nullable
+    private Args_Parameter args_parameter; //nullable
+    private Kwargs_Parameter kwargs_parameter; //nullable
 
     public Args_Kwargs_Parameters_List() {
-        this.args_parameter_arraylist = null;
-        this.kwargs_parameter_arraylist = null;
+        this.args_parameter = null;
+        this.kwargs_parameter = null;
     }
 
-    public ArrayList<Args_Parameter> getArgs_parameter_arraylist() {
-        if(args_parameter_arraylist == null){
-            this.args_parameter_arraylist = new ArrayList<>();
+    public Args_Parameter getArgs_parameter() {
+        if(args_parameter == null){
+            this.args_parameter = new Args_Parameter();
         }
-        return args_parameter_arraylist;
+        return args_parameter;
     }
-    public void setArgs_parameter_arraylist(ArrayList<Args_Parameter> args_parameter_arraylist) {
-        this.args_parameter_arraylist = args_parameter_arraylist;
-    }
-    public void add_to_args_parameter_arraylist(Args_Parameter ex){
-        if(args_parameter_arraylist == null){
-            this.args_parameter_arraylist = new ArrayList<>();
-        }
-        this.args_parameter_arraylist.add(ex);
+    public void setArgs_parameter(Args_Parameter args_parameter) {
+        this.args_parameter = args_parameter;
     }
 
-    public ArrayList<Kwargs_Parameter> getKwargs_parameter_arraylist() {
-        if(kwargs_parameter_arraylist == null){
-            this.kwargs_parameter_arraylist = new ArrayList<>();
+    public Kwargs_Parameter getKwargs_parameter() {
+        if(kwargs_parameter == null){
+            this.kwargs_parameter = new Kwargs_Parameter();
         }
-        return kwargs_parameter_arraylist;
+        return kwargs_parameter;
     }
-    public void setKwargs_parameter_arraylist(ArrayList<Kwargs_Parameter> kwargs_parameter_arraylist) {
-        this.kwargs_parameter_arraylist = kwargs_parameter_arraylist;
-    }
-    public void add_to_ex_arraylist(Kwargs_Parameter ex){
-        if(kwargs_parameter_arraylist == null){
-            this.kwargs_parameter_arraylist = new ArrayList<>();
-        }
-        this.kwargs_parameter_arraylist.add(ex);
+    public void setKwargs_parameter(Kwargs_Parameter kwargs_parameter) {
+        this.kwargs_parameter = kwargs_parameter;
     }
 
     @Override
     public String toString() {
         String result = "\nArgs_Kwargs_Parameters_List{";
-        if(args_parameter_arraylist != null) {
-            result += "\nargs_parameter_arraylist=" + args_parameter_arraylist;
+        if(args_parameter != null) {
+            result += "\nargs_parameter=" + args_parameter;
         }
-        if(kwargs_parameter_arraylist != null) {
-            result += "\nkwargs_parameter_arraylist=" + kwargs_parameter_arraylist;
+        if(kwargs_parameter != null) {
+            result += "\n, kwargs_parameter=" + kwargs_parameter;
         }
         result += "\n}";
         return result;
