@@ -42,7 +42,7 @@ public class Arguments_List {
     public void setIdentifier_equal_expr_argument_arraylist(ArrayList<Identifier_Equal_Expr_Argument> identifier_equal_expr_argument_arraylist) {
         this.identifier_equal_expr_argument_arraylist = identifier_equal_expr_argument_arraylist;
     }
-    public void add_to_ex_arraylist(Identifier_Equal_Expr_Argument ex){
+    public void add_to_identifier_equal_expr_argument_arraylist(Identifier_Equal_Expr_Argument ex){
         if(identifier_equal_expr_argument_arraylist == null){
             this.identifier_equal_expr_argument_arraylist = new ArrayList<>();
         }
@@ -58,7 +58,7 @@ public class Arguments_List {
     public void setArgs_argument_arraylist(ArrayList<Args_Argument> args_argument_arraylist) {
         this.args_argument_arraylist = args_argument_arraylist;
     }
-    public void add_to_ex_arraylist(Args_Argument ex){
+    public void add_to_args_argument_arraylist(Args_Argument ex){
         if(args_argument_arraylist == null){
             this.args_argument_arraylist = new ArrayList<>();
         }
@@ -74,7 +74,7 @@ public class Arguments_List {
     public void setKwargs_argument_arraylist(ArrayList<Kwargs_Argument> kwargs_argument_arraylist) {
         this.kwargs_argument_arraylist = kwargs_argument_arraylist;
     }
-    public void add_to_ex_arraylist(Kwargs_Argument ex){
+    public void add_to_kwargs_argument_arraylist(Kwargs_Argument ex){
         if(kwargs_argument_arraylist == null){
             this.kwargs_argument_arraylist = new ArrayList<>();
         }

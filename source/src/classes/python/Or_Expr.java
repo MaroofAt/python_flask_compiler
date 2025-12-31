@@ -2,7 +2,7 @@ package classes.python;
 
 import java.util.ArrayList;
 
-public class Or_Expr {
+public class Or_Expr extends Conditional_Expr_Or_Expr{
     ArrayList<And_Expr> and_expr_arraylist;
 
     public Or_Expr() {

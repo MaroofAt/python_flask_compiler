@@ -1,6 +1,6 @@
 package classes.python;
 
-public class Import_From_Stmt extends Small_Stmt{
+public class Import_From_Stmt extends Import_Stmt{
     private Import_From_Target import_from_target;
     private Import_Targets import_targets;
 

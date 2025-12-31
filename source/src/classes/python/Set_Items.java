@@ -17,7 +17,7 @@ public class Set_Items {
         this.expr_arraylist = expr_arraylist;
     }
 
-    public void add_to_ex_arraylist(Expr ex){
+    public void add_to_expr_arraylist(Expr ex){
         this.expr_arraylist.add(ex);
     }
 

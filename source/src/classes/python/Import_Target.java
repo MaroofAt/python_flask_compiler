@@ -1,5 +1,7 @@
 package classes.python;
 
+import classes.with_arr_ex;
+
 import java.util.ArrayList;
 
 public class Import_Target {
@@ -15,7 +17,9 @@ public class Import_Target {
     public void setIdentifier_arraylist(ArrayList<Identifier> identifier_arraylist) {
         this.identifier_arraylist = identifier_arraylist;
     }
-
+    public void add_to_identifier_arraylist(Identifier ex){
+        this.identifier_arraylist.add(ex);
+    }
     @Override
     public String toString() {
         return "\nImport_Target{" +
