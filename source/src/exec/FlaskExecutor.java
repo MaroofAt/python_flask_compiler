@@ -67,6 +67,8 @@ public class FlaskExecutor {
 //            }
             System.out.println("\n" +py_file.toString() + ":\n");
             System.out.println(application);
+            System.out.println("\nsymbol_table:");
+            PythonBaseVisitor.symbolTable.print();
             return true;
         }catch (IOException ioe){
             ioe.printStackTrace();

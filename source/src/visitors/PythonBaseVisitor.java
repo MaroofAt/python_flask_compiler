@@ -5,9 +5,23 @@ import antlr.PythonParserBaseVisitor;
 
 import classes.python.*;
 import classes.python.Number;
+import classes.python.symbols.SymbolTable;
 
 
 public class PythonBaseVisitor extends PythonParserBaseVisitor {
+
+    public static SymbolTable symbolTable = new SymbolTable();
+    private String current_scope = "global";
+    private int if_num = 0;
+    private int for_num = 0;
+    private int while_num = 0;
+    private int try_num = 0;
+    private int except_num = 0;
+    private int with_num = 0;
+    private int func_num = 0;
+    private int class_num = 0;
+    private String current_symbol_kind;
+
     @Override
     public Application visitApplication(PythonParser.ApplicationContext ctx) {
 //        return super.visitApplication(ctx);
@@ -221,7 +235,10 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
                 visitTarget_atom(ctx.target_atom())
         );
 
-        if(ctx.target_postfix() == null) return target;
+        if(ctx.target_postfix() == null){
+            this.current_symbol_kind = "variable";
+            return target;
+        }
 
         for(PythonParser.Target_postfixContext tp_ctx: ctx.target_postfix()){
             target.add_to_target_postfix_arraylist(
@@ -254,6 +271,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Target_Postfix_Attribute_Ref visitTargetPostfixAttributeRef(PythonParser.TargetPostfixAttributeRefContext ctx) {
 //        return super.visitTarget_Postfix_Attribute_Ref(ctx);
         Target_Postfix_Attribute_Ref target_postfix_attribute_ref = new Target_Postfix_Attribute_Ref();
+        this.current_symbol_kind = "entity";
         target_postfix_attribute_ref.setAttribute_ref(
                 visitAttribute_ref(ctx.attribute_ref())
         );
@@ -264,6 +282,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Target_Postfix_Subscription visitTargetPostfixSubscription(PythonParser.TargetPostfixSubscriptionContext ctx) {
 //        return super.visitTarget_Postfix_Subscription(ctx);
         Target_Postfix_Subscription target_postfix_subscription = new Target_Postfix_Subscription();
+        this.current_symbol_kind = "array";
         target_postfix_subscription.setSubscription(
                 visitSubscription(ctx.subscription())
         );
@@ -512,6 +531,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Call visitCall(PythonParser.CallContext ctx) {
 //        return super.visitCall(ctx);
         Call call = new Call();
+        this.current_symbol_kind = "function_call";
         if(ctx.arguments_list() == null) return call;
         call.setArguments_list(
                 visitArguments_list(ctx.arguments_list())
@@ -523,6 +543,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Subscription visitSubscription(PythonParser.SubscriptionContext ctx) {
 //        return super.visitSubscription(ctx);
         Subscription subscription = new Subscription();
+        this.current_symbol_kind = "array";
         subscription.setExpr(
                 visitExpr(ctx.expr())
         );
@@ -533,6 +554,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Attribute_Ref visitAttribute_ref(PythonParser.Attribute_refContext ctx) {
 //        return super.visitAttribute_ref(ctx);
         Attribute_Ref attribute_ref = new Attribute_Ref();
+        this.current_symbol_kind = "attribute";
         attribute_ref.setIdentifier(
                 visitIdentifier(ctx.identifier())
         );
@@ -776,6 +798,8 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public If_Stmt visitIf_stmt(PythonParser.If_stmtContext ctx) {
 //        return super.visitIf_stmt(ctx);
         If_Stmt if_stmt = new If_Stmt();
+        this.if_num++;
+        this.current_scope = "if" + Integer.toString(this.if_num);
         for(PythonParser.ExprContext e_ctx: ctx.expr()){
             if_stmt.add_to_expr_arraylist(
                     visitExpr(e_ctx)
@@ -802,6 +826,8 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public For_Stmt visitFor_stmt(PythonParser.For_stmtContext ctx) {
 //        return super.visitFor_stmt(ctx);
         For_Stmt for_stmt = new For_Stmt();
+        this.for_num++;
+        this.current_scope = "for" + Integer.toString(for_num);
         for_stmt.setTarget_list(
                 visitTarget_list(ctx.target_list())
         );
@@ -818,6 +844,8 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public While_Stmt visitWhile_stmt(PythonParser.While_stmtContext ctx) {
 //        return super.visitWhile_stmt(ctx);
         While_Stmt while_stmt = new While_Stmt();
+        this.while_num++;
+        this.current_scope = "while" + Integer.toString(while_num);
         while_stmt.setExpr(
                 visitExpr(ctx.expr())
         );
@@ -831,7 +859,9 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Func_Stmt visitFunc_def(PythonParser.Func_defContext ctx) {
 //        return super.visitFunc_def(ctx);
         Func_Stmt func_stmt = new Func_Stmt();
-
+        this.current_symbol_kind = "function";
+        this.func_num++;
+        this.current_scope = "func" + Integer.toString(func_num);
         if(ctx.decorators() != null){
             func_stmt.setDecorators(
                     visitDecorators(ctx.decorators())
@@ -1002,6 +1032,9 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Class_Def visitClass_def(PythonParser.Class_defContext ctx) {
 //        return super.visitClass_def(ctx);
         Class_Def class_def = new Class_Def();
+        this.current_symbol_kind = "class";
+        this.class_num++;
+        this.current_scope = "class" + Integer.toString(class_num);
         class_def.setIdentifier(
                 visitIdentifier(ctx.identifier())
         );
@@ -1038,21 +1071,27 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Try_Stmt visitTryStmt(PythonParser.TryStmtContext ctx) {
 //        return super.visitTry_Stmt(ctx);
         Try_Stmt try_stmt = new Try_Stmt();
+        this.try_num++;
+        this.current_scope = "try" + Integer.toString(try_num);
         try_stmt.setSuite(
                 visitSuite(ctx.suite())
         );
         for(PythonParser.Except_clauseContext ec_ctx: ctx.except_clause()){
+            this.except_num++;
+            this.current_scope = "except" + Integer.toString(except_num);
             try_stmt.add_to_except_clause_arraylist(
                     visitExcept_clause(ec_ctx)
             );
         }
 
         if(ctx.else_clause() != null){
+            this.current_scope = "try_else_clause" + Integer.toString(try_num);
             try_stmt.setElse_clause(
                     visitElse_clause(ctx.else_clause())
             );
         }
         if(ctx.finally_clause() != null){
+            this.current_scope = "finally" + Integer.toString(try_num);
             try_stmt.setFinally_clause(
                     visitFinally_clause(ctx.finally_clause())
             );
@@ -1064,9 +1103,12 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Try_Finally_Stmt visitTryFinallyStmt(PythonParser.TryFinallyStmtContext ctx) {
 //        return super.visitTry_Finally_Stmt(ctx);
         Try_Finally_Stmt try_finally_stmt = new Try_Finally_Stmt();
+        this.try_num++;
+        this.current_scope = "try" + Integer.toString(try_num);
         try_finally_stmt.setSuite1(
                 visitSuite(ctx.suite().get(0))
         );
+        this.current_scope = "finally" + Integer.toString(try_num);
         try_finally_stmt.setSuite2(
                 visitSuite(ctx.suite().get(1))
         );
@@ -1139,6 +1181,8 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public With_Stmt visitWith_stmt(PythonParser.With_stmtContext ctx) {
 //        return super.visitWith_stmt(ctx);
         With_Stmt with_stmt = new With_Stmt();
+        this.with_num++;
+        this.current_scope = "with" + Integer.toString(with_num);
         for(PythonParser.With_itemContext wi_ctx: ctx.with_item()){
             with_stmt.add_to_with_item_arraylist(
                     visitWith_item(wi_ctx)
@@ -1365,6 +1409,8 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
 //        return super.visitIdentifier(ctx);
         Identifier identifier = new Identifier();
         identifier.setName(ctx.getText());
+
+        this.symbolTable.addSymbol(ctx.getText(), this.current_symbol_kind , this.current_scope);
         return identifier;
     }
 }
