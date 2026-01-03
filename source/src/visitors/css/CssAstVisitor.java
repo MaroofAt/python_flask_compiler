@@ -1,8 +1,8 @@
 package visitors.css;
 
 import classes.css.*;
-import gen.ParserCss;
-import gen.ParserCssBaseVisitor;
+import antlr.ParserCss;
+import antlr.ParserCssBaseVisitor;
 
 public class CssAstVisitor extends ParserCssBaseVisitor<CssNode> {
 

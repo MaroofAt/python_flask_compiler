@@ -28,6 +28,9 @@ public class Target {
     }
 
     public void add_to_target_postfix_arraylist(Target_Postfix ex){
+        if(target_postfix_arraylist == null){
+            this.target_postfix_arraylist = new ArrayList<>();
+        }
         this.target_postfix_arraylist.add(ex);
     }
 

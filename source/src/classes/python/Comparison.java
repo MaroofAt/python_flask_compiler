@@ -33,6 +33,9 @@ public class Comparison {
     }
 
     public void add_to_comparision_operator_arraylist(Comparision_Operator ex){
+        if(comparision_operator_arraylist == null){
+            this.comparision_operator_arraylist = new ArrayList<>();
+        }
         this.comparision_operator_arraylist.add(ex);
     }
 

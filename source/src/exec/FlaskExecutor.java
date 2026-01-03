@@ -47,6 +47,7 @@ public class FlaskExecutor {
     public boolean compile_py(File py_file){
         try {
             ArrayList<String> imported_files = look_for_imports_py(py_file);
+            System.out.println("DEBUG: compile_py: imported_files" + imported_files);
             for(String file_path: imported_files){
                 File file = new File(this.folder_path+ "\\" + file_path);
                 if(file.exists()) compile_py(file);
@@ -59,12 +60,15 @@ public class FlaskExecutor {
             ParseTree parseTree = parser.application();
             Application application = (Application) new PythonBaseVisitor().visit(parseTree);
             ArrayList<String> html_files = look_for_html_render(py_file);
-            for(String file_path: html_files){
-                File file = new File(this.folder_path+ "\\templates\\" +file_path);
-                if(file.exists()) compile_jinja(file);
-            }
+            System.out.println("DEBUG: compile_py: html_files" + html_files);
+//            for(String file_path: html_files){
+//                File file = new File(this.folder_path+ "\\templates\\" +file_path);
+//                if(file.exists()) compile_jinja(file);
+//            }
             System.out.println("\n" +py_file.toString() + ":\n");
             System.out.println(application);
+            System.out.println("\nsymbol_table:");
+            PythonBaseVisitor.symbolTable.print();
             return true;
         }catch (IOException ioe){
             ioe.printStackTrace();
@@ -75,6 +79,7 @@ public class FlaskExecutor {
         }
     }
     public ArrayList<String> look_for_imports_py(File py_file){
+        System.out.println("\n\nConfig: py_file.name = "+py_file.toString()+"\n\n");
         try (BufferedReader br = new BufferedReader(new FileReader(py_file.toString()))) {
             String line;
             ArrayList<String> imported_files = new ArrayList<>();
@@ -84,15 +89,16 @@ public class FlaskExecutor {
                 if(from_i == -1){
                     int import_i = line.indexOf("import");
                     if(import_i == -1){
-                        throw new Exception("FlaskExecutor: look_for_imports_py: The Example Provided is wrong !!");
+//                        throw new Exception("FlaskExecutor: look_for_imports_py: The Example Provided is wrong !!");
+                        continue;
                     }
-                    line = line.substring(import_i+5).trim();
+                    line = line.substring(import_i+6).trim();
                     String[] imports = line.split(",");
                     for(String s: imports){
                         imported_files.add(s.trim());
                     }
                 }else{
-                    line = line.substring(from_i+3).trim();
+                    line = line.substring(from_i+4).trim();
                     int import_i = line.indexOf("import");
                     if(import_i == -1){
                         throw new Exception("FlaskExecutor: look_for_imports_py: The Example Provided is wrong !!");
@@ -118,15 +124,22 @@ public class FlaskExecutor {
                 line = line.trim();
                 int render_template_i = line.indexOf("render_template");
                 if(render_template_i != -1){
-                    int stop_i = line.indexOf(",");
+                    int import_i = line.indexOf("import");
+                    if(import_i != -1) continue;
+                    String temp_line = line.substring(render_template_i+16).trim();
+                    int stop_i = temp_line.indexOf(",");
                     if(stop_i == -1){
-                        stop_i = line.indexOf(")");
+                        stop_i = temp_line.indexOf(")");
                         if(stop_i == -1){
                             throw new Exception("FlaskExecutor: look_for_html_render: The Example Provided is wrong !!");
                         }
                     }
-                    line = line.substring(render_template_i+15 , stop_i).trim();
-                    html_files.add(line);
+                    stop_i = stop_i + render_template_i+16;
+                    line = line.substring(render_template_i+16 , stop_i).trim();
+                    if(line.length() > 0){
+                        line = line.substring(1, line.length()-1).trim(); // to remove "" or '' from around the filename
+                        html_files.add(line);
+                    }
                 }
 
             }

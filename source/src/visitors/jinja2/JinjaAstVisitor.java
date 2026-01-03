@@ -1,8 +1,8 @@
 package visitors.jinja2;
 
 import classes.jinja.*;
-import gen.Jinja2Parser;
-import gen.Jinja2ParserBaseVisitor;
+import antlr.Jinja2Parser;
+import antlr.Jinja2ParserBaseVisitor;
 
 public class JinjaAstVisitor extends Jinja2ParserBaseVisitor<JinjaNode> {
 
