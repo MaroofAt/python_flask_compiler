@@ -97,7 +97,7 @@ class JSONProductStorage:
         products = self.read_all()
         if not products:
             return 1
-        max = None
+        max = 0
         for product in products:
             if product.get('id', 0) > max:
                 max = product.get('id', 0)
