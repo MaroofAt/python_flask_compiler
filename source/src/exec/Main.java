@@ -13,6 +13,8 @@ public class Main {
     public static void main(String[] args){
         try {
             test_python_lexer_and_parser();
+            FlaskExecutor exec = new FlaskExecutor("D:\\Projects\\Compiler\\python_flask_compiler\\flask_project");
+            exec.compile();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -22,7 +24,7 @@ public class Main {
     static void test_python_lexer_and_parser(){
         try{
             // 1. Read source file
-            String source = Files.readString(Path.of("D:\\Projects\\Compiler\\python_flask_compiler\\source\\src\\exec\\test.py"));
+            String source = Files.readString(Path.of("D:\\Projects\\Compiler\\python_flask_compiler\\flask_project\\app.py"));
 
             // 2. Create lexer
             CharStream input = CharStreams.fromString(source);

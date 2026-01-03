@@ -29,6 +29,14 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
                     visitStatement(ctx.statement().get(i))
             );
         }
+//        if(ctx.NEWLINE() == null) return statements;
+//
+//        for (int i = 0 ; i < ctx.NEWLINE().size() ; i++) {
+//            statements.add_to_newlines_arraylist(
+//                    ctx.NEWLINE().get(i).getText()
+//            );
+//        }
+
         return statements;
     }
 
@@ -56,12 +64,23 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     public Simple_Stmt visitSimple_stmt(PythonParser.Simple_stmtContext ctx) {
 //        return super.visitSimple_stmt(ctx);
         Simple_Stmt simple_stmt = new Simple_Stmt();
-        for(PythonParser.Small_stmtContext small_stmt_ctx: ctx.small_stmt()){
-            simple_stmt.add_to_small_stmt_arraylist(
-                    visitSmall_stmt(small_stmt_ctx)
-            );
+        if(ctx.small_stmt() != null) {
+            for (PythonParser.Small_stmtContext small_stmt_ctx : ctx.small_stmt()) {
+                simple_stmt.add_to_small_stmt_arraylist(
+                        visitSmall_stmt(small_stmt_ctx)
+                );
+            }
+        }else if(ctx.NEWLINE() != null){
+            simple_stmt.setNewline(ctx.NEWLINE().getText());
+        }else{
+            try {
+                throw new Exception("PythonBaseVisitor: visitSimple_stmt: the simple_stmt provided is not valid !!");
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally {
+                return null;
+            }
         }
-
         return simple_stmt;
     }
 
@@ -134,7 +153,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Regular_Assignment visitRegular_Assignment(PythonParser.Regular_AssignmentContext ctx) {
+    public Regular_Assignment visitRegularAssignment(PythonParser.RegularAssignmentContext ctx) {
 //        return super.visitRegular_Assignment(ctx);
         Regular_Assignment regular_assignment = new Regular_Assignment();
         for(PythonParser.Target_listContext tl_ctx: ctx.target_list()){
@@ -150,7 +169,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Typed_Assignment visitTyped_Assignment(PythonParser.Typed_AssignmentContext ctx) {
+    public Typed_Assignment visitTypedAssignment(PythonParser.TypedAssignmentContext ctx) {
 //        return super.visitTyped_Assignment(ctx);
         Typed_Assignment typed_assignment = new Typed_Assignment();
         typed_assignment.setIdentifier1(
@@ -222,7 +241,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
                     visitIdentifier(ctx.identifier())
             );
         }
-        if(ctx.identifier() != null){
+        if(ctx.target_list() != null){
             target_atom.setTarget_list(
                     visitTarget_list(ctx.target_list())
             );
@@ -232,7 +251,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Target_Postfix_Attribute_Ref visitTarget_Postfix_Attribute_Ref(PythonParser.Target_Postfix_Attribute_RefContext ctx) {
+    public Target_Postfix_Attribute_Ref visitTargetPostfixAttributeRef(PythonParser.TargetPostfixAttributeRefContext ctx) {
 //        return super.visitTarget_Postfix_Attribute_Ref(ctx);
         Target_Postfix_Attribute_Ref target_postfix_attribute_ref = new Target_Postfix_Attribute_Ref();
         target_postfix_attribute_ref.setAttribute_ref(
@@ -242,7 +261,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Target_Postfix_Subscription visitTarget_Postfix_Subscription(PythonParser.Target_Postfix_SubscriptionContext ctx) {
+    public Target_Postfix_Subscription visitTargetPostfixSubscription(PythonParser.TargetPostfixSubscriptionContext ctx) {
 //        return super.visitTarget_Postfix_Subscription(ctx);
         Target_Postfix_Subscription target_postfix_subscription = new Target_Postfix_Subscription();
         target_postfix_subscription.setSubscription(
@@ -262,26 +281,6 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
         }
         return target_list;
     }
-
-    @Override
-    public Typed_Assignment visitTyped_assignment(PythonParser.Typed_assignmentContext ctx) {
-//        return super.visitTyped_assignment(ctx);
-        Typed_Assignment typed_assignment = new Typed_Assignment();
-        typed_assignment.setIdentifier1(
-                visitIdentifier(ctx.identifier().get(0))
-        );
-        typed_assignment.setIdentifier2(
-                visitIdentifier(ctx.identifier().get(1))
-        );
-
-        if(ctx.expr() == null) return typed_assignment;
-
-        typed_assignment.setExpr(
-                visitExpr(ctx.expr())
-        );
-        return typed_assignment;
-    }
-
     @Override
     public Expr visitExpr(PythonParser.ExprContext ctx) {
 //        return super.visitExpr(ctx);
@@ -302,14 +301,14 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Conditional_Expr_Or_Expr visitOr_Expr(PythonParser.Or_ExprContext ctx) {
+    public Or_Expr visitOrExpr(PythonParser.OrExprContext ctx) {
 //        return super.visitOr_Expr(ctx);
-        Conditional_Expr_Or_Expr conditional_expr_or_expr = visitOr_expr(ctx.or_expr());
-        return conditional_expr_or_expr;
+        Or_Expr or_expr = visitOr_expr(ctx.or_expr());
+        return or_expr;
     }
 
     @Override
-    public Or_Expr_Short_If visitOr_Expr_Short_If(PythonParser.Or_Expr_Short_IfContext ctx) {
+    public Or_Expr_Short_If visitOrExprShortIf(PythonParser.OrExprShortIfContext ctx) {
 //        return super.visitOr_Expr_Short_If(ctx);
         Or_Expr_Short_If or_expr_short_if = new Or_Expr_Short_If();
         or_expr_short_if.setOr_expr1(
@@ -541,7 +540,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Atom_Identifier visitAtom_Identifier(PythonParser.Atom_IdentifierContext ctx) {
+    public Atom_Identifier visitAtomIdentifier(PythonParser.AtomIdentifierContext ctx) {
 //        return super.visitAtom_Identifier(ctx);
         Atom_Identifier atom_identifier = new Atom_Identifier();
         atom_identifier.setIdentifier(
@@ -551,14 +550,14 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Atom_Literal visitAtom_Literal(PythonParser.Atom_LiteralContext ctx) {
+    public Atom_Literal visitAtomLiteral(PythonParser.AtomLiteralContext ctx) {
 //        return super.visitAtom_Literal(ctx);
         Atom_Literal atom_literal = (Atom_Literal) visit(ctx.literal());
         return atom_literal;
     }
 
     @Override
-    public Atom_Enclosure visitAtom_Enclosure(PythonParser.Atom_EnclosureContext ctx) {
+    public Atom_Enclosure visitAtomEnclosure(PythonParser.AtomEnclosureContext ctx) {
 //        return super.visitAtom_Enclosure(ctx);
 //        Atom_Enclosure atom_enclosure = (Atom_Enclosure) visit(ctx.enclosure());
 //        return atom_enclosure;
@@ -566,7 +565,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Atom_Expr visitAtom_Expr(PythonParser.Atom_ExprContext ctx) {
+    public Atom_Expr visitAtomExpr(PythonParser.AtomExprContext ctx) {
 //        return super.visitAtom_Expr(ctx);
         Atom_Expr atom_expr = new Atom_Expr();
         atom_expr.setExpr(
@@ -576,7 +575,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Literal_Number visitLiteral_Number(PythonParser.Literal_NumberContext ctx) {
+    public Literal_Number visitLiteralNumber(PythonParser.LiteralNumberContext ctx) {
 //        return super.visitLiteral_Number(ctx);
         Literal_Number literal_number = new Literal_Number();
         literal_number.setNumber(
@@ -586,7 +585,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Literal_String visitLiteral_String(PythonParser.Literal_StringContext ctx) {
+    public Literal_String visitLiteralString(PythonParser.LiteralStringContext ctx) {
 //        return super.visitLiteral_String(ctx);
 
 //        Literal_String literal_string = new Literal_String();
@@ -596,7 +595,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Literal_Bool_None visitLiteral_Bool_None(PythonParser.Literal_Bool_NoneContext ctx) {
+    public Literal_Bool_None visitLiteralBoolNone(PythonParser.LiteralBoolNoneContext ctx) {
 //        return super.visitLiteral_Bool_None(ctx);
         Literal_Bool_None literal_bool_none = new Literal_Bool_None();
         literal_bool_none.setString(ctx.getText());
@@ -942,7 +941,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
                 visitIdentifier(ctx.identifier().get(0))
         );
 
-        if(ctx.identifier().get(1) == null) return non_default_parameter;
+        if(ctx.identifier().size() < 2) return non_default_parameter;
 
         non_default_parameter.setIdentifier2(
                 visitIdentifier(ctx.identifier().get(1))
@@ -1036,7 +1035,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Try_Stmt visitTry_Stmt(PythonParser.Try_StmtContext ctx) {
+    public Try_Stmt visitTryStmt(PythonParser.TryStmtContext ctx) {
 //        return super.visitTry_Stmt(ctx);
         Try_Stmt try_stmt = new Try_Stmt();
         try_stmt.setSuite(
@@ -1062,7 +1061,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Try_Finally_Stmt visitTry_Finally_Stmt(PythonParser.Try_Finally_StmtContext ctx) {
+    public Try_Finally_Stmt visitTryFinallyStmt(PythonParser.TryFinallyStmtContext ctx) {
 //        return super.visitTry_Finally_Stmt(ctx);
         Try_Finally_Stmt try_finally_stmt = new Try_Finally_Stmt();
         try_finally_stmt.setSuite1(
@@ -1192,7 +1191,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
 
 
     @Override
-    public Import_Stmt visitImport_Stmt(PythonParser.Import_StmtContext ctx) {
+    public Import_Stmt visitImportStmt(PythonParser.ImportStmtContext ctx) {
 //        return super.visitImport_Stmt(ctx);
         Import_Stmt import_stmt = new Import_Stmt();
         import_stmt.setImport_targets(
@@ -1202,7 +1201,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Import_From_Stmt visitImport_From_Stmt(PythonParser.Import_From_StmtContext ctx) {
+    public Import_From_Stmt visitImportFromStmt(PythonParser.ImportFromStmtContext ctx) {
 //        return super.visitImport_From_Stmt(ctx);
         Import_From_Stmt import_from_stmt = new Import_From_Stmt();
         import_from_stmt.setImport_from_target(
@@ -1227,7 +1226,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Import_Target visitImport_Target(PythonParser.Import_TargetContext ctx) {
+    public Import_Target visitImportTarget(PythonParser.ImportTargetContext ctx) {
 //        return super.visitImport_Target(ctx);
         Import_Target import_target = new Import_Target();
         for(PythonParser.IdentifierContext i_ctx: ctx.identifier()){
@@ -1240,7 +1239,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Import_Star visitImport_Star(PythonParser.Import_StarContext ctx) {
+    public Import_Star visitImportStar(PythonParser.ImportStarContext ctx) {
 //        return super.visitImport_Star(ctx);
         Import_Star import_star = new Import_Star();
         import_star.setStar(ctx.getText());
@@ -1248,7 +1247,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
     }
 
     @Override
-    public Import_From_Target visitImport_From_Target(PythonParser.Import_From_TargetContext ctx) {
+    public Import_From_Target visitImportFromTarget(PythonParser.ImportFromTargetContext ctx) {
 //        return super.visitImport_From_Target(ctx);
         Import_From_Target import_from_target = new Import_From_Target();
         for(PythonParser.IdentifierContext i_ctx: ctx.identifier()){
@@ -1261,7 +1260,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
 
 
     @Override
-    public Import_From_Target_Dots visitImport_From_Target_Dots(PythonParser.Import_From_Target_DotsContext ctx) {
+    public Import_From_Target_Dots visitImportFromTargetDots(PythonParser.ImportFromTargetDotsContext ctx) {
 //        return super.visitImport_From_Target_Dots(ctx);
         Import_From_Target_Dots import_from_target_dots = new Import_From_Target_Dots();
         import_from_target_dots.setDots(ctx.getText());
@@ -1295,7 +1294,7 @@ public class PythonBaseVisitor extends PythonParserBaseVisitor {
         raise_expression.setException_instance1(
                 visitException_instance(ctx.exception_instance().get(0))
         );
-        if(ctx.exception_instance().get(1) == null) return raise_expression;
+        if(ctx.exception_instance().size() < 2) return raise_expression;
         raise_expression.setException_instance2(
                 visitException_instance(ctx.exception_instance().get(1))
         );

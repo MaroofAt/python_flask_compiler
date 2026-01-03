@@ -48,6 +48,7 @@ lexer grammar PythonLexer;
         // If EOF (end-of-file), unwind indent stack and emit DEDENT tokens (one per remaining indent level), then EOF
         if (next.getType() == org.antlr.v4.runtime.Token.EOF) {
             // emit DEDENTs (and optionally a final NEWLINE if your parser expects it).
+            pending.add(commonToken(NEWLINE, "\n"));
             while (indents.size() > 1) {
                 pending.add(commonToken(DEDENT, "<DEDENT>"));
                 indents.pop();

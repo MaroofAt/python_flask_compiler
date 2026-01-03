@@ -1,8 +1,8 @@
 package visitors.html;
 
 import classes.html.*;
-import gen.ParserHtml;
-import gen.ParserHtmlBaseVisitor;
+import antlr.ParserHtml;
+import antlr.ParserHtmlBaseVisitor;
 
 public class HtmlAstVisitor extends ParserHtmlBaseVisitor<HtmlNode> {
 

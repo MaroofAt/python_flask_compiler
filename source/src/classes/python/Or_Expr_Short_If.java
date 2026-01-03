@@ -1,6 +1,6 @@
 package classes.python;
 
-public class Or_Expr_Short_If {
+public class Or_Expr_Short_If extends Conditional_Expr{
     private Or_Expr or_expr1;
     private Or_Expr or_expr2;
     private Conditional_Expr conditional_expr;

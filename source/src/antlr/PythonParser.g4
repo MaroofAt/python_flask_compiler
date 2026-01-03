@@ -16,7 +16,8 @@ statement
     ;
 
 simple_stmt
-    : small_stmt (SEMI small_stmt)* NEWLINE
+    : NEWLINE
+    | small_stmt (SEMI small_stmt)* NEWLINE
     ;
 
 small_stmt
@@ -44,9 +45,9 @@ compound_stmt
 
 
 assignment
-    : (target_list EQUAL)+ expr     #Regular_Assignment
+    : (target_list EQUAL)+ expr     #RegularAssignment
     // 👆 Attention: this allows: ``` a = b = c = 1,2,3,4,5 ``` which is wrong, So later in semantic checks we have to reject that case
-    | typed_assignment              #Typed_Assignment
+    | typed_assignment              #TypedAssignment
     ;
 
 augmented_assignment
@@ -73,8 +74,8 @@ target_atom
     ;
 
 target_postfix
-    : attribute_ref     #Target_Postfix_Attribute_Ref
-    | subscription      #Target_Postfix_Subscription
+    : attribute_ref     #TargetPostfixAttributeRef
+    | subscription      #TargetPostfixSubscription
     ;
 
 target_list
@@ -99,8 +100,8 @@ tuple_expr // Important Note for AST: in AST we must handle "(a)" as an atom not
     ;
 
 conditional_expr
-    : or_expr                                           #Or_Expr
-    | or_expr IF or_expr ELSE conditional_expr          #Or_Expr_Short_If   // short if statement
+    : or_expr                                           #OrExpr
+    | or_expr IF or_expr ELSE conditional_expr          #OrExprShortIf   // short if statement
     ;
 
 or_expr
@@ -167,17 +168,17 @@ attribute_ref
     ;
 
 atom
-    : identifier            #Atom_Identifier
-    | literal               #Atom_Literal
-    | enclosure             #Atom_Enclosure
-    | LPAR expr RPAR        #Atom_Expr
+    : identifier            #AtomIdentifier
+    | literal               #AtomLiteral
+    | enclosure             #AtomEnclosure
+    | LPAR expr RPAR        #AtomExpr
     ;
 
 literal
-    : number            #Literal_Number
-    | strings           #Literal_String
-    | BOOLEAN           #Literal_Bool_None
-    | NONE              #Literal_Bool_None
+    : number            #LiteralNumber
+    | strings           #LiteralString
+    | BOOLEAN           #LiteralBoolNone
+    | NONE              #LiteralBoolNone
     ;
 strings
     : STRING
@@ -343,10 +344,10 @@ try_stmt
     : TRY COLON suite
         except_clause+
         NEWLINE? else_clause?
-        NEWLINE? finally_clause?                        #Try_Stmt
+        NEWLINE? finally_clause?                        #TryStmt
 
     | TRY COLON suite
-        NEWLINE FINALLY COLON suite                     #Try_Finally_Stmt
+        NEWLINE FINALLY COLON suite                     #TryFinallyStmt
     ;
 
 else_clause
@@ -388,8 +389,8 @@ suite
 // Small Simple Statments
 
 import_stmt
-    : IMPORT import_targets                             #Import_Stmt
-    | FROM import_from_target IMPORT import_targets     #Import_From_Stmt
+    : IMPORT import_targets                             #ImportStmt
+    | FROM import_from_target IMPORT import_targets     #ImportFromStmt
     ;
 
 import_targets
@@ -397,15 +398,15 @@ import_targets
     ;
 
 import_target
-    : identifier (AS identifier)?                       #Import_Target
-    | identifier (DOT identifier)+ (AS identifier)?     #Import_Target
-    | STAR                                              #Import_Star
+    : identifier (AS identifier)?                       #ImportTarget
+    | identifier (DOT identifier)+ (AS identifier)?     #ImportTarget
+    | STAR                                              #ImportStar
     ;
 
 import_from_target
-    : identifier (DOT identifier)*                      #Import_From_Target
-    | (DOT | ELLIPSIS)+                                 #Import_From_Target_Dots
-    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*    #Import_From_Target
+    : identifier (DOT identifier)*                      #ImportFromTarget
+    | (DOT | ELLIPSIS)+                                 #ImportFromTargetDots
+    | (DOT | ELLIPSIS)+ identifier (DOT identifier)*    #ImportFromTarget
     ;
 
 // Tiny Simple Statements
