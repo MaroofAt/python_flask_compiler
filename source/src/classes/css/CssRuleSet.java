@@ -12,6 +12,16 @@ public class CssRuleSet extends CssNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+        for (CssSelector s : selectors) {
+            s.print(indent);
+        }
+        for (CssDeclaration d : declarations) {
+            d.print(indent);
+        }
+    }
+
+    @Override
     public String toString() {
         return "\nCssRuleSet{" +
                 "\nselectors=" + selectors +

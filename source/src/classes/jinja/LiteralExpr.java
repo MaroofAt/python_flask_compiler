@@ -8,6 +8,8 @@ public class LiteralExpr extends JinjaExpression {
         super(line, "LiteralExpr");
         this.value = value;
     }
+    protected void printChildren(String indent) {
+    }
 
     public String toString() {
         return value;

@@ -9,6 +9,11 @@ public class CssSelector extends CssNode {
     public CssSelector(int line) {
         super(line, "Selector");
     }
+    @Override
+    protected void printChildren(String indent) {
+        for (CssSimpleSelector s : parts)
+            s.print(indent);
+    }
 
     @Override
     public String toString() {

@@ -11,6 +11,12 @@ public class CssMediaRule extends CssNode {
         super(line, "MediaRule");
         this.condition = condition;
     }
+    @Override
+    protected void printChildren(String indent) {
+        condition.print(indent);
+        for (CssRuleSet r : ruleSets)
+            r.print(indent);
+    }
 
     @Override
     public String toString() {

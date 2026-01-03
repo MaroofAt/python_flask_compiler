@@ -8,6 +8,9 @@ public class JinjaText extends JinjaNode {
         super(line, "Text");
         this.text = text;
     }
+    @Override
+    protected void printChildren(String indent) {
+    }
 
     @Override
     public String toString() {

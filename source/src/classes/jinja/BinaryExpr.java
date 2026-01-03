@@ -13,6 +13,11 @@ public class BinaryExpr extends JinjaExpression {
         this.operator = operator;
         this.right = right;
     }
+    @Override
+    protected void printChildren(String indent) {
+        left.print(indent);
+        right.print(indent);
+    }
 
     public String toString() {
         return "(" + left + " " + operator + " " + right + ")";

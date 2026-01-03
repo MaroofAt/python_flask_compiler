@@ -28,6 +28,6 @@ public class MainCss {
         CssNode ast = visitor.visit(tree);
 
         System.out.println("==== CSS AST ====");
-       // ast.print("");
+        ast.print("");
     }
 }

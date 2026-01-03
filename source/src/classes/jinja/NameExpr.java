@@ -7,6 +7,9 @@ public class NameExpr extends JinjaExpression {
         super(line, "NameExpr");
         this.name = name;
     }
+    protected void printChildren(String indent) {
+    }
+
 
     public String toString() {
         return name;

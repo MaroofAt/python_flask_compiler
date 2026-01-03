@@ -12,6 +12,16 @@ public class CssStylesheet extends CssNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+        for (CssRuleSet r : ruleSets) {
+            r.print(indent);
+        }
+        for (CssMediaRule m : mediaRules) {
+            m.print(indent);
+        }
+    }
+
+    @Override
     public String toString() {
         return "\nCssStylesheet{" +
                 "\nruleSets=" + ruleSets +

@@ -8,6 +8,8 @@ public class JinjaRaw extends JinjaNode {
         super(line, "Raw");
         this.content = content;
     }
+    protected void printChildren(String indent) {
+    }
 
     @Override
     public String toString() {
