@@ -10,6 +10,10 @@ public class TextNode extends HtmlNode {
         super(line, "Text");
         this.text = text;
     }
+    @Override
+    protected void printChildren(String indent) {
+        // لا أبناء
+    }
 
     @Override
     public String toString() {

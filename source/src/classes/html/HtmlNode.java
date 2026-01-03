@@ -17,6 +17,11 @@ public abstract class HtmlNode {
         return nodeName;
     }
 
-    @Override
-    public abstract String toString();
+    public void print(String indent) {
+        System.out.println(indent + nodeName + " (line " + line + ")");
+        printChildren(indent + "  ");
+    }
+
+
+    protected abstract void printChildren(String indent);
 }

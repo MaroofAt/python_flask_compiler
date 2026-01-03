@@ -17,6 +17,14 @@ public class SelfClosingElementNode extends ElementNode {
         attributes.add(attr);
     }
 
+
+    @Override
+    protected void printChildren(String indent) {
+        for (AttributeNode a : attributes) {
+            a.print(indent);
+        }
+    }
+
     @Override
     public String toString() {
         return "\nSelfClosingElement{" +

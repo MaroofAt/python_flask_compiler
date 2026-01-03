@@ -21,6 +21,16 @@ public class NormalElementNode extends ElementNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+        openTag.print(indent);
+        for (HtmlNode n : content) {
+            n.print(indent);
+        }
+        closeTag.print(indent);
+    }
+
+
+    @Override
     public String toString() {
         return "\nNormalElement{" +
                 "\n openTag=" + openTag +

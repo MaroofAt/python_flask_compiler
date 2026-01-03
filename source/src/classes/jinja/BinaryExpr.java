@@ -1,3 +1,6 @@
+
+package classes.jinja;
+
 public class BinaryExpr extends JinjaExpression {
 
     public JinjaExpression left;

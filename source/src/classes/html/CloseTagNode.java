@@ -9,6 +9,11 @@ public class CloseTagNode extends HtmlNode {
         super(line, "CloseTag");
         this.tagName = tagName;
     }
+    @Override
+    protected void printChildren(String indent) {
+
+    }
+
 
     @Override
     public String toString() {

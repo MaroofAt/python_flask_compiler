@@ -1,3 +1,5 @@
+package classes.jinja;
+
 public class NameExpr extends JinjaExpression {
     public String name;
 
