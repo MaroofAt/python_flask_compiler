@@ -10,6 +10,10 @@ public class JinjaComment extends JinjaNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+    }
+
+    @Override
     public String toString() {
         return "{# " + content + " #}";
     }

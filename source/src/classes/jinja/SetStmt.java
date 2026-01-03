@@ -11,6 +11,11 @@ public class SetStmt extends JinjaStatement {
         this.name = name;
         this.value = value;
     }
+    @Override
+    protected void printChildren(String indent) {
+        value.print(indent);
+    }
+
 
     public String toString() {
         return "{% set " + name + " = " + value + " %}";

@@ -17,6 +17,11 @@ public class ForStmt extends JinjaStatement {
         this.iterable = iterable;
         this.body = body;
     }
+    @Override
+    protected void printChildren(String indent) {
+        iterable.print(indent);
+        body.print(indent);
+    }
 
     public String toString() {
         return "\nFor(" + variable + " in " + iterable + ")" + body;

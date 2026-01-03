@@ -14,6 +14,13 @@ public class JinjaBody extends JinjaNode {
         elements.add(node);
     }
 
+
+    @Override
+    protected void printChildren(String indent) {
+        for (JinjaNode n : elements)
+            n.print(indent);
+    }
+
     @Override
     public String toString() {
         return elements.toString();

@@ -13,6 +13,11 @@ public class JinjaTemplate extends JinjaNode {
     public void add(JinjaNode node) {
         children.add(node);
     }
+    @Override
+    protected void printChildren(String indent) {
+        for (JinjaNode n : children)
+            n.print(indent);
+    }
 
     @Override
     public String toString() {

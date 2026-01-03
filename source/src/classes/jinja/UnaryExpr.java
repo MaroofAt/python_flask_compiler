@@ -11,6 +11,10 @@ public class UnaryExpr extends JinjaExpression {
         this.operator = operator;
         this.expr = expr;
     }
+    @Override
+    protected void printChildren(String indent) {
+        expr.print(indent);
+    }
 
     public String toString() {
         return operator + expr;

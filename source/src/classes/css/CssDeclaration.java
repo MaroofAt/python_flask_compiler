@@ -10,7 +10,11 @@ public class CssDeclaration extends CssNode {
         this.property = property;
         this.value = value;
     }
-
+    @Override
+    protected void printChildren(String indent) {
+        if (value != null)
+            value.print(indent);
+    }
     @Override
     public String toString() {
         return property + ":" + value;

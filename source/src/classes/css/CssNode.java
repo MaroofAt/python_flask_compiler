@@ -1,6 +1,7 @@
 package classes.css;
 
 public abstract class CssNode {
+
     protected int line;
     protected String nodeName;
 
@@ -9,11 +10,10 @@ public abstract class CssNode {
         this.nodeName = nodeName;
     }
 
-    public int getLine() {
-        return line;
+    public void print(String indent) {
+        System.out.println(indent + nodeName + " (line " + line + ")");
+        printChildren(indent + "  ");
     }
 
-    public String getNodeName() {
-        return nodeName;
-    }
+    protected abstract void printChildren(String indent);
 }

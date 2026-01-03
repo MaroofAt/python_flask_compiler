@@ -1,6 +1,7 @@
 package classes.jinja;
 
 public abstract class JinjaNode {
+
     protected int line;
     protected String nodeName;
 
@@ -9,12 +10,10 @@ public abstract class JinjaNode {
         this.nodeName = nodeName;
     }
 
-
-    public int getLine() {
-        return line;
+    public void print(String indent) {
+        System.out.println(indent + nodeName + " (line " + line + ")");
+        printChildren(indent + "  ");
     }
 
-    public String getNodeName() {
-        return nodeName;
-    }
+    protected abstract void printChildren(String indent);
 }

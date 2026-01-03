@@ -27,6 +27,6 @@ public class MainJinja {
         JinjaNode ast = visitor.visit(tree);
 
         System.out.println("==== JINJA AST ====");
-     //   ast.print("");
+        ast.print("");
     }
 }

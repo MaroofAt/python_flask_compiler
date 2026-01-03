@@ -16,6 +16,17 @@ public class IfStmt extends JinjaStatement {
     }
 
     @Override
+    protected void printChildren(String indent) {
+        condition.print(indent);
+        body.print(indent);
+        for (IfStmt e : elifs)
+            e.print(indent);
+        if (elseBody != null)
+            elseBody.print(indent);
+    }
+
+
+    @Override
     public String toString() {
         return "\nIf(" + condition + ")" + body;
     }
