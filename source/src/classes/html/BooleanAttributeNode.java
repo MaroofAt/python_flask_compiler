@@ -8,6 +8,12 @@ public class BooleanAttributeNode extends AttributeNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+
+    }
+
+
+    @Override
     public String toString() {
         return "\nBooleanAttribute{" +
                 "name='" + name + '\'' +

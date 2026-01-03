@@ -9,6 +9,7 @@ public abstract class JinjaNode {
         this.nodeName = nodeName;
     }
 
+
     public int getLine() {
         return line;
     }

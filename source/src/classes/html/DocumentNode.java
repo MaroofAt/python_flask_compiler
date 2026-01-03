@@ -20,6 +20,15 @@ public class DocumentNode extends HtmlNode {
         return elements;
     }
 
+
+    @Override
+    protected void printChildren(String indent) {
+        for (HtmlNode n : elements) {
+            n.print(indent);
+        }
+    }
+
+
     @Override
     public String toString() {
         return "\nDocumentNode{" +

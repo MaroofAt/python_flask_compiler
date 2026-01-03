@@ -1,3 +1,6 @@
+package classes.jinja;
+
+
 public class SetStmt extends JinjaStatement {
 
     public String name;

@@ -12,6 +12,12 @@ public class NormalAttributeNode extends AttributeNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+
+    }
+
+
+    @Override
     public String toString() {
         return "\nNormalAttribute{" +
                 "name='" + name + '\'' +

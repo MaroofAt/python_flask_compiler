@@ -18,6 +18,14 @@ public class VoidElementNode extends ElementNode {
     }
 
     @Override
+    protected void printChildren(String indent) {
+        for (AttributeNode a : attributes) {
+            a.print(indent);
+        }
+    }
+
+
+    @Override
     public String toString() {
         return "\nVoidElement{" +
                 "\n tagName='" + tagName + '\'' +
