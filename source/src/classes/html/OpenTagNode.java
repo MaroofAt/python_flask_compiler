@@ -14,6 +14,14 @@ public class OpenTagNode extends HtmlNode {
         this.attributes = new ArrayList<>();
     }
 
+    public String getTagName() {
+        return tagName;
+    }
+
+    public ArrayList<AttributeNode> getAttributes() {
+        return attributes;
+    }
+
     public void addAttribute(AttributeNode attr) {
         attributes.add(attr);
     }

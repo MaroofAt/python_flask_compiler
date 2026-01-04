@@ -9,7 +9,9 @@ public abstract class CssNode {
         this.line = line;
         this.nodeName = nodeName;
     }
-
+    public int getLine() {
+        return line;
+    }
     public void print(String indent) {
         System.out.println(indent + nodeName + " (line " + line + ")");
         printChildren(indent + "  ");

@@ -1,10 +1,13 @@
 package exec;
 
 import antlr.*;
+import classes.html.DocumentNode;
+import symbols.html.HtmlSymbolTable;
 import visitors.html.HtmlAstVisitor;
 import classes.html.HtmlNode;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
+import visitors.html.HtmlSymbolTableVisitor;
 
 public class MainHtml {
 
@@ -13,7 +16,7 @@ public class MainHtml {
         String input = """
             <div>
                 <span>Hello</span>
-                <img />
+                <img/>
             </div>
         """;
 
@@ -29,5 +32,10 @@ public class MainHtml {
 
         System.out.println("==== HTML AST ====");
         ast.print("");
+
+        System.out.println("\n==== SYMBOL TABLE ====");
+        HtmlSymbolTableVisitor stVisitor = new HtmlSymbolTableVisitor();
+        HtmlSymbolTable table = stVisitor.build((DocumentNode) ast);
+        table.print("");
     }
 }

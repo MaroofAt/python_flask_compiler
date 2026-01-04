@@ -11,6 +11,9 @@ public class NormalAttributeNode extends AttributeNode {
         this.value = value;
     }
 
+    public String getValue() {
+        return value;
+    }
     @Override
     protected void printChildren(String indent) {
 

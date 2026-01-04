@@ -8,9 +8,11 @@ public abstract class AttributeNode extends HtmlNode {
 
     @Override
     protected void printChildren(String indent) {
- 
-    }
 
+    }
+    public String getname() {
+        return name;
+    }
 
     public AttributeNode(int line, String name) {
         super(line, "Attribute");

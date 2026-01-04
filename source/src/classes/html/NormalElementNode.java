@@ -16,6 +16,19 @@ public class NormalElementNode extends ElementNode {
         this.content = new ArrayList<>();
     }
 
+
+    public OpenTagNode getOpenTag() {
+        return openTag;
+    }
+
+    public ArrayList<HtmlNode> getContent() {
+        return content;
+    }
+
+    public CloseTagNode getCloseTag() {
+        return closeTag;
+    }
+
     public void addContent(HtmlNode node) {
         content.add(node);
     }
