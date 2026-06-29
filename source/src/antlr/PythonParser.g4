@@ -1,7 +1,7 @@
 parser grammar PythonParser;
 
 options {tokenVocab = PythonLexer;}
-// TODO: [ revent return outside function ]
+
 application
     : NEWLINE? statements EOF
     ;

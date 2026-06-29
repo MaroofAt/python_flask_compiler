@@ -1,8 +1,8 @@
 package exec;
 
 import antlr.*;
-import gen.Jinja2Lexer;
-import gen.Jinja2Parser;
+import antlr.Jinja2Lexer;
+import antlr.Jinja2Parser;
 import visitors.jinja2.JinjaAstVisitor;
 import classes.jinja.JinjaNode;
 import org.antlr.v4.runtime.*;

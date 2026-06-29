@@ -14,7 +14,8 @@ public class SymbolTable {
         for (Scope scope : scopes.values()) {
             System.out.println("Scope: " + scope.name);
             for (Symbol s : scope.symbols.values()) {
-                System.out.println("  " + s.name + " -> " + s.kind);
+//                System.out.println("  " + s.name + " -> " + s.kind);
+                System.out.println("  " + s.name);
             }
         }
     }
